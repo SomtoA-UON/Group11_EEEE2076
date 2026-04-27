@@ -11,6 +11,7 @@
 #include <vtkActor.h>
 #include <vtkProperty.h>
 #include <vtkCamera.h>
+#include <vtkLight.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -37,6 +38,21 @@ MainWindow::MainWindow(QWidget *parent)
     /* Add a renderer */
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
+
+    /* --- ADD LIGHTING HERE --- */
+    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    light->SetLightTypeToSceneLight();
+    light->SetPosition(5, 5, 15);
+    light->SetPositional(true);
+    light->SetConeAngle(10);
+    light->SetFocalPoint(0, 0, 0);
+    light->SetDiffuseColor(1, 1, 1);
+    light->SetAmbientColor(1, 1, 1);
+    light->SetSpecularColor(1, 1, 1);
+    light->SetIntensity(0.5);
+
+    renderer->AddLight(light);
+    /* --- END LIGHTING --- */
 
     /* Create an object and add to renderer (this will change later to display a CAD model) */
     /* Will just copy and paste cylinder example from before */
