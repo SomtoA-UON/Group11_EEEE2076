@@ -1,4 +1,4 @@
-/**     @file ModelPart.h
+/**     @file ModelPart.cpp
   *
   *     EEEE2076 - Software Engineering & VR Project
   *
@@ -7,143 +7,330 @@
   *     P Evans 2022
   */
 
-#ifndef VIEWER_MODELPART_H
-#define VIEWER_MODELPART_H
+#include "ModelPart.h"
 
-#include <QString>
-#include <QList>
-#include <QVariant>
+#include <QDebug>
 
   /* VTK headers */
-#include <vtkSmartPointer.h>
-#include <vtkActor.h>
-#include <vtkSTLReader.h>
-#include <vtkColor.h>
-#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 
-class ModelPart
+/**
+ * Constructor.
+ */
+ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
+    : m_itemData(data),
+    m_parentItem(parent)
 {
-public:
-    /** Constructor
-     * @param data is a list of strings/properties for this item
-     * @param parent is the parent of this item in the tree
+    /*
+     * Your tree uses five columns:
+     * 0 = part name
+     * 1 = visible
+     * 2 = red
+     * 3 = green
+     * 4 = blue
+     *
+     * This makes sure the list always has enough columns.
      */
-    ModelPart(const QList<QVariant>& data, ModelPart* parent = nullptr);
+    while (m_itemData.size() < 5)
+    {
+        m_itemData.append(QVariant());
+    }
 
-    /** Destructor
-      * Frees all child items
-      */
-    ~ModelPart();
+    isVisible = true;
 
-    /** Add a child to this item
-      * @param item pointer to child object
-      */
-    void appendChild(ModelPart* item);
+    set(1, "true");
 
-    /** Return child at position row below this item
-      * @param row child row number
-      * @return pointer to child item
-      */
-    ModelPart* child(int row);
+    setColour(255, 255, 255);
+}
 
-    /** Return number of children
-      * @return number of children
-      */
-    int childCount() const;
+/**
+ * Destructor.
+ */
+ModelPart::~ModelPart()
+{
+    qDeleteAll(m_childItems);
+}
 
-    /** Return number of columns/properties
-      * @return number of visible data columns
-      */
-    int columnCount() const;
+/**
+ * Add child item.
+ */
+void ModelPart::appendChild(ModelPart* item)
+{
+    if (item == nullptr)
+    {
+        return;
+    }
 
-    /** Return the data item at a particular column
-      * @param column column index
-      * @return QVariant data value
-      */
-    QVariant data(int column) const;
+    item->m_parentItem = this;
+    m_childItems.append(item);
+}
 
-    /** Set a property value
-      * @param column column index
-      * @param value value to set
-      */
-    void set(int column, const QVariant& value);
+/**
+ * Return child item.
+ */
+ModelPart* ModelPart::child(int row)
+{
+    if (row < 0 || row >= m_childItems.size())
+    {
+        return nullptr;
+    }
 
-    /** Get pointer to parent item
-      * @return pointer to parent item
-      */
-    ModelPart* parentItem();
+    return m_childItems.at(row);
+}
 
-    /** Get row index of this item relative to parent
-      * @return row index
-      */
-    int row() const;
+/**
+ * Return number of children.
+ */
+int ModelPart::childCount() const
+{
+    return m_childItems.count();
+}
 
-    /** Set colour using 0-255 RGB values
-      * @param R red value
-      * @param G green value
-      * @param B blue value
-      */
-    void setColour(const unsigned char R,
-        const unsigned char G,
-        const unsigned char B);
+/**
+ * Return number of columns.
+ */
+int ModelPart::columnCount() const
+{
+    return m_itemData.count();
+}
 
-    /** Get red colour value
-      * @return red value, 0-255
-      */
-    unsigned char getColourR();
+/**
+ * Return data from a column.
+ */
+QVariant ModelPart::data(int column) const
+{
+    if (column < 0 || column >= m_itemData.size())
+    {
+        return QVariant();
+    }
 
-    /** Get green colour value
-      * @return green value, 0-255
-      */
-    unsigned char getColourG();
+    return m_itemData.at(column);
+}
 
-    /** Get blue colour value
-      * @return blue value, 0-255
-      */
-    unsigned char getColourB();
+/**
+ * Set data in a column.
+ */
+void ModelPart::set(int column, const QVariant& value)
+{
+    if (column < 0 || column >= m_itemData.size())
+    {
+        return;
+    }
 
-    /** Set visible flag
-      * @param isVisible true if visible, false if hidden
-      */
-    void setVisible(bool isVisible);
+    m_itemData.replace(column, value);
+}
 
-    /** Get visible flag
-      * @return true if visible
-      */
-    bool visible();
+/**
+ * Return parent item.
+ */
+ModelPart* ModelPart::parentItem()
+{
+    return m_parentItem;
+}
 
-    /** Load STL file
-      * @param fileName STL file path
-      */
-    void loadSTL(QString fileName);
+/**
+ * Return row index.
+ */
+int ModelPart::row() const
+{
+    if (m_parentItem)
+    {
+        return m_parentItem->m_childItems.indexOf(
+            const_cast<ModelPart*>(this)
+        );
+    }
 
-    /** Return GUI actor
-      * @return pointer to actor used in the normal Qt/VTK renderer
-      */
-    vtkSmartPointer<vtkActor> getActor();
+    return 0;
+}
 
-    /** Return a new actor for VR
-      *
-      * Important:
-      * This does NOT return the normal GUI actor.
-      * It creates a new mapper and a new actor for the VR renderer.
-      *
-      * @return pointer to new actor used in VR
-      */
-    vtkSmartPointer<vtkActor> getNewActor();
+/**
+ * Set colour.
+ */
+void ModelPart::setColour(const unsigned char R,
+    const unsigned char G,
+    const unsigned char B)
+{
+    colour.SetRed(R);
+    colour.SetGreen(G);
+    colour.SetBlue(B);
 
-private:
-    QList<ModelPart*>                       m_childItems;   /**< Child items */
-    QList<QVariant>                         m_itemData;     /**< Column data */
-    ModelPart* m_parentItem;   /**< Parent item */
+    set(2, static_cast<int>(R));
+    set(3, static_cast<int>(G));
+    set(4, static_cast<int>(B));
 
-    bool                                    isVisible;      /**< Visibility flag */
+    /*
+     * VTK uses colour values between 0.0 and 1.0,
+     * but the GUI/tree stores them between 0 and 255.
+     */
+    if (actor != nullptr)
+    {
+        actor->GetProperty()->SetColor(
+            static_cast<double>(R) / 255.0,
+            static_cast<double>(G) / 255.0,
+            static_cast<double>(B) / 255.0
+        );
+    }
+}
 
-    vtkSmartPointer<vtkSTLReader>           file;           /**< STL reader */
-    vtkSmartPointer<vtkPolyDataMapper>      mapper;         /**< GUI mapper */
-    vtkSmartPointer<vtkActor>               actor;          /**< GUI actor */
+/**
+ * Get red value.
+ */
+unsigned char ModelPart::getColourR()
+{
+    return static_cast<unsigned char>(data(2).toInt());
+}
 
-    vtkColor3<unsigned char>                colour;         /**< RGB colour */
-};
+/**
+ * Get green value.
+ */
+unsigned char ModelPart::getColourG()
+{
+    return static_cast<unsigned char>(data(3).toInt());
+}
 
-#endif
+/**
+ * Get blue value.
+ */
+unsigned char ModelPart::getColourB()
+{
+    return static_cast<unsigned char>(data(4).toInt());
+}
+
+/**
+ * Set visibility.
+ */
+void ModelPart::setVisible(bool isVisible)
+{
+    this->isVisible = isVisible;
+
+    set(1, isVisible ? "true" : "false");
+
+    if (actor != nullptr)
+    {
+        actor->SetVisibility(isVisible);
+    }
+}
+
+/**
+ * Return visibility.
+ */
+bool ModelPart::visible()
+{
+    return isVisible;
+}
+
+/**
+ * Load STL file.
+ */
+void ModelPart::loadSTL(QString fileName)
+{
+    /*
+     * 1. Create STL reader.
+     */
+    file = vtkSmartPointer<vtkSTLReader>::New();
+    file->SetFileName(fileName.toStdString().c_str());
+    file->Update();
+
+    /*
+     * 2. Create mapper for the normal GUI renderer.
+     */
+    mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputConnection(file->GetOutputPort());
+
+    /*
+     * 3. Create actor for the normal GUI renderer.
+     */
+    actor = vtkSmartPointer<vtkActor>::New();
+    actor->SetMapper(mapper);
+
+    /*
+     * 4. Apply current colour and visibility.
+     */
+    actor->GetProperty()->SetColor(
+        static_cast<double>(getColourR()) / 255.0,
+        static_cast<double>(getColourG()) / 255.0,
+        static_cast<double>(getColourB()) / 255.0
+    );
+
+    actor->SetVisibility(isVisible);
+
+    qDebug() << "STL loaded:" << fileName;
+    qDebug() << "Actor is null?" << (actor == nullptr);
+}
+
+/**
+ * Return GUI actor.
+ */
+vtkSmartPointer<vtkActor> ModelPart::getActor()
+{
+    return actor;
+}
+
+/**
+ * Create and return a new actor for VR.
+ *
+ * This is important:
+ *
+ * The GUI renderer already uses:
+ * STL reader -> GUI mapper -> GUI actor
+ *
+ * The VR renderer must use:
+ * same STL reader -> new VR mapper -> new VR actor
+ *
+ * Do not return the normal GUI actor here.
+ */
+vtkSmartPointer<vtkActor> ModelPart::getNewActor()
+{
+    if (file == nullptr || actor == nullptr)
+    {
+        return nullptr;
+    }
+
+    /*
+     * 1. Create a new mapper for VR.
+     * This mapper uses the same STL reader output as the GUI mapper.
+     */
+    vtkSmartPointer<vtkPolyDataMapper> newMapper =
+        vtkSmartPointer<vtkPolyDataMapper>::New();
+
+    newMapper->SetInputConnection(file->GetOutputPort());
+
+    /*
+     * 2. Create a new actor for VR.
+     */
+    vtkSmartPointer<vtkActor> newActor =
+        vtkSmartPointer<vtkActor>::New();
+
+    newActor->SetMapper(newMapper);
+
+    /*
+     * 3. Link the property from the GUI actor.
+     *
+     * This means colour/material changes on the GUI actor can also be seen
+     * by the VR actor because they share the same vtkProperty object.
+     */
+    newActor->SetProperty(actor->GetProperty());
+
+    /*
+     * 4. Copy visibility and transform values.
+     */
+    newActor->SetVisibility(actor->GetVisibility());
+
+    double position[3];
+    actor->GetPosition(position);
+    newActor->SetPosition(position);
+
+    double orientation[3];
+    actor->GetOrientation(orientation);
+    newActor->SetOrientation(orientation);
+
+    double scale[3];
+    actor->GetScale(scale);
+    newActor->SetScale(scale);
+
+    double origin[3];
+    actor->GetOrigin(origin);
+    newActor->SetOrigin(origin);
+
+    return newActor;
+}
