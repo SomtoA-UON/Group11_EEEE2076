@@ -1,15 +1,14 @@
-/**
- * @file VRRenderThread.h
- *
- * EEEE2076 - Software Development Group Design Project
- *
- * VR rendering thread for the Qt/VTK application.
- */
+/**     @file VRRenderThread.h
+  *
+  *     EEEE2076 - Software Engineering & VR Project
+  *
+  *     Template to add VR rendering to your application.
+  */
 
 #ifndef VR_RENDER_THREAD_H
 #define VR_RENDER_THREAD_H
 
- /* Qt headers */
+  /* Qt headers */
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
@@ -29,8 +28,9 @@
 /**
  * @class VRRenderThread
  *
- * This class runs the OpenVR renderer in a separate thread from the main Qt GUI.
- * Actors should be added before the thread is started using addActorOffline().
+ * Runs the OpenVR renderer in a separate thread from the main Qt GUI.
+ *
+ * Actors should be added using addActorOffline() before the thread is started.
  */
 class VRRenderThread : public QThread
 {
@@ -50,8 +50,6 @@ public:
 
     /**
      * Constructor.
-     *
-     * @param parent Parent QObject.
      */
     explicit VRRenderThread(QObject* parent = nullptr);
 
@@ -61,52 +59,46 @@ public:
     ~VRRenderThread() override;
 
     /**
-     * Adds an actor to the VR scene before the VR thread has started.
+     * Add an actor before the VR thread starts.
      *
-     * Important: this actor should NOT be the same actor used in the normal Qt renderer.
-     * It should be a new actor with a new mapper.
-     *
-     * @param actor Actor to add to the VR renderer.
+     * Important:
+     * This actor should be a separate VR actor, not the same actor used
+     * in the normal Qt/VTK renderer.
      */
     void addActorOffline(vtkActor* actor);
 
     /**
-     * Sends a command to the VR thread in a thread-safe way.
-     *
-     * @param cmd Command from the Command enum.
-     * @param value Value linked to the command.
+     * Send a command to the VR thread.
      */
     void issueCommand(int cmd, double value);
 
 protected:
     /**
-     * Main VR thread function.
-     *
-     * This runs when VRRenderThread::start() is called.
+     * Main thread function. Runs when start() is called.
      */
     void run() override;
 
 private:
-    /* Standard VTK VR objects */
+    /* Standard VTK VR classes */
     vtkSmartPointer<vtkOpenVRRenderWindow>              window;
     vtkSmartPointer<vtkOpenVRRenderWindowInteractor>    interactor;
     vtkSmartPointer<vtkOpenVRRenderer>                  renderer;
     vtkSmartPointer<vtkOpenVRCamera>                    camera;
 
-    /* Used to synchronise commands between the GUI thread and VR thread */
+    /* Used to synchronise commands from the GUI thread */
     QMutex                                              mutex;
     QWaitCondition                                      condition;
 
-    /* Actors that will be added to the VR scene */
+    /* Actors to add to the VR scene */
     vtkSmartPointer<vtkActorCollection>                 actors;
 
-    /* Timer used for animation updates */
+    /* Timer for animation */
     std::chrono::time_point<std::chrono::steady_clock>  t_last;
 
-    /* If true, the VR render loop will end */
+    /* Render loop control */
     bool                                                endRender;
 
-    /* Rotation values applied during animation */
+    /* Animation rotation values */
     double                                              rotateX;
     double                                              rotateY;
     double                                              rotateZ;
