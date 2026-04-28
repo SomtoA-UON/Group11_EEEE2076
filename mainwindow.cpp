@@ -1,215 +1,449 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QMessageBox>
+
+#include "OptionDialog.h"
+
 #include <QFileDialog>
-#include "optiondialog.h"
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QStatusBar>
+#include <QTreeView>
+
 #include <vtkSmartPointer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
-#include <vtkCylinderSource.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkProperty.h>
 #include <vtkCamera.h>
-#include <vtkLight.h>
+#include <vtkProperty.h>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+/**
+ * Constructor.
+ */
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    partList(nullptr),
+    vrThread(nullptr)
 {
     ui->setupUi(this);
-    connect(ui->pushButton,  &QPushButton::released, this, &MainWindow::handleButton1);
-    connect(ui->pushButton_2, &QPushButton::released, this, &MainWindow::handleButton2);
 
-    connect(this, &MainWindow::statusUpdateMessage,
-            ui->statusbar, &QStatusBar::showMessage);
+    /*
+     * Button connections.
+     *
+     * Your .ui file has:
+     * - startVRButton
+     * - pushButton_2
+     */
+    connect(ui->startVRButton,
+        &QPushButton::released,
+        this,
+        &MainWindow::startVR);
 
-    /* Create the model list */
-    this->partList = new ModelPartList("Parts List");
+    connect(ui->pushButton_2,
+        &QPushButton::released,
+        this,
+        &MainWindow::handleButton2);
 
-    /* Link it to the treeview in the GUI */
-    ui->treeView->setModel(this->partList);
+    /*
+     * Status bar message connection.
+     */
+    connect(this,
+        &MainWindow::statusUpdateMessage,
+        ui->statusbar,
+        &QStatusBar::showMessage);
 
-    /* This needs adding to MainWindow constructor */
-    /* Link a render window with the Qt widget */
+    /*
+     * Create the model list.
+     */
+    partList = new ModelPartList("Parts List");
+
+    /*
+     * Link the model list to the tree view.
+     */
+    ui->treeView->setModel(partList);
+
+    /*
+     * Connect tree click signal.
+     */
+    connect(ui->treeView,
+        &QTreeView::clicked,
+        this,
+        &MainWindow::handleTreeClicked);
+
+    /*
+     * Allow the item options action to be used from the tree view.
+     */
+    ui->treeView->addAction(ui->actionItem_Options);
+
+    /*
+     * Create the VTK render window and attach it to the Qt VTK widget.
+     */
     renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     ui->widget->setRenderWindow(renderWindow);
 
-    /* Add a renderer */
+    /*
+     * Create renderer.
+     */
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
 
-    /* --- ADD LIGHTING HERE --- */
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetLightTypeToSceneLight();
-    light->SetPosition(5, 5, 15);
-    light->SetPositional(true);
-    light->SetConeAngle(10);
-    light->SetFocalPoint(0, 0, 0);
-    light->SetDiffuseColor(1, 1, 1);
-    light->SetAmbientColor(1, 1, 1);
-    light->SetSpecularColor(1, 1, 1);
-    light->SetIntensity(0.5);
+    /*
+     * Set a simple background colour.
+     */
+    renderer->SetBackground(0.75, 0.75, 0.75);
 
-    renderer->AddLight(light);
-    /* --- END LIGHTING --- */
-
-    /* Create an object and add to renderer (this will change later to display a CAD model) */
-    /* Will just copy and paste cylinder example from before */
-    // This creates a polygonal cylinder model with eight circumferential facets
-    // (i.e, in practice an octagonal prism).
-    vtkNew<vtkCylinderSource> cylinder;
-    cylinder->SetResolution(8);
-
-    // The mapper is responsible for pushing the geometry into the graphics
-    // library. It may also do color mapping, if scalars or other attributes are defined.
-    vtkNew<vtkPolyDataMapper> cylinderMapper;
-    cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
-
-    // The actor is a grouping mechanism: besides the geometry (mapper), it
-    // also has a property, transformation matrix, and/or texture map.
-    // Here we set its color and rotate it around the X and Y axes.
-
-    connect(ui->treeView, &QTreeView::clicked,
-            this, &MainWindow::handleTreeClicked);
-
-    ui->treeView->addAction(ui->actionItem_Options);
-
-
+    emit statusUpdateMessage("Ready.", 3000);
 }
 
+/**
+ * Destructor.
+ */
 MainWindow::~MainWindow()
 {
+    /*
+     * Stop VR safely if it is still running.
+     */
+    if (vrThread != nullptr && vrThread->isRunning())
+    {
+        vrThread->issueCommand(VRRenderThread::END_RENDER, 0.0);
+        vrThread->wait();
+    }
+
+    delete partList;
     delete ui;
 }
 
-void MainWindow::handleButton1() {
-    emit statusUpdateMessage(QString("Button 1 was clicked"), 0);
-}
-
-void MainWindow::handleButton2() {
-    OptionDialog dialog(this);
-
-    QModelIndex index = ui->treeView->currentIndex();
-    if (index.isValid()) {
-        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        dialog.loadFromModelPart(selectedPart);
-    }
-
-    if (dialog.exec() == QDialog::Accepted) {
-        QModelIndex index = ui->treeView->currentIndex();
-        if (index.isValid()) {
-            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-            dialog.saveToModelPart(selectedPart);
-        }
-        emit statusUpdateMessage(QString("Dialog accepted"), 0);
-    } else {
-        emit statusUpdateMessage(QString("Dialog rejected"), 0);
-    }
-}
-
-void MainWindow::handleTreeClicked() {
-    /* Get the index of the selected item */
-    QModelIndex index = ui->treeView->currentIndex();
-
-    /* Get a pointer to the item from the index */
-    ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-
-    /* Retrieve the name string from the item's data array */
-    QString text = selectedPart->data(0).toString();
-
-    emit statusUpdateMessage(QString("The selected item is: ") + text, 0);
-}
-
-void MainWindow::on_actionOpen_File_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(
-        this,
-        tr("Open File"),
-        "C:\\",
-        tr("STL Files (*.stl);;Text Files (*.txt)"));
-
-    if (!fileName.isEmpty()) {
-
-        ModelPart* newPart = new ModelPart({ fileName, "true", "255", "255", "255" });
-
-        // Check if an item is selected in the tree
-        QModelIndex index = ui->treeView->currentIndex();
-
-        if (index.isValid()) {
-            // Add as child of selected item
-            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-            selectedPart->appendChild(newPart);
-        } else {
-            // No selection - add to root
-            partList->getRootItem()->appendChild(newPart);
-        }
-
-        partList->refreshModel();
-
-        newPart->loadSTL(fileName);
-
-        updateRender();
-
-        emit statusUpdateMessage(QString("File opened: ") + fileName, 0);
-    }
-}
-
-void MainWindow::on_actionItem_Options_triggered() {
-    QModelIndex index = ui->treeView->currentIndex();
-
-    if (!index.isValid()) {
-        emit statusUpdateMessage(QString("No item selected"), 0);
+/**
+ * Start the VR renderer.
+ *
+ * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
+ * adds those actors to the VR thread, then starts the thread.
+ */
+void MainWindow::startVR()
+{
+    if (vrThread != nullptr && vrThread->isRunning())
+    {
+        emit statusUpdateMessage("VR is already running.", 3000);
         return;
     }
 
-    ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
+    if (partList == nullptr || partList->rowCount(QModelIndex()) == 0)
+    {
+        emit statusUpdateMessage("Load an STL model before starting VR.", 3000);
+        return;
+    }
+
+    vrThread = new VRRenderThread(this);
+
+    int actorCount = 0;
+
+    int rows = partList->rowCount(QModelIndex());
+
+    for (int i = 0; i < rows; i++)
+    {
+        QModelIndex index = partList->index(i, 0, QModelIndex());
+        actorCount += addPartToVRThread(index);
+    }
+
+    if (actorCount == 0)
+    {
+        delete vrThread;
+        vrThread = nullptr;
+
+        emit statusUpdateMessage("No visible STL actors found for VR.", 3000);
+        return;
+    }
+
+    connect(vrThread,
+        &QThread::finished,
+        this,
+        [this]()
+        {
+            emit statusUpdateMessage("VR stopped.", 3000);
+            vrThread = nullptr;
+        });
+
+    connect(vrThread,
+        &QThread::finished,
+        vrThread,
+        &QObject::deleteLater);
+
+    vrThread->start();
+
+    emit statusUpdateMessage("VR started.", 3000);
+}
+
+/**
+ * Recursively adds visible model parts to the VR thread.
+ *
+ * Each ModelPart creates a separate VR actor using getNewActor().
+ * The GUI actor is not reused.
+ */
+int MainWindow::addPartToVRThread(const QModelIndex& index)
+{
+    if (!index.isValid() || vrThread == nullptr)
+    {
+        return 0;
+    }
+
+    int actorCount = 0;
+
+    ModelPart* selectedPart =
+        static_cast<ModelPart*>(index.internalPointer());
+
+    if (selectedPart != nullptr && selectedPart->visible())
+    {
+        vtkSmartPointer<vtkActor> vrActor = selectedPart->getNewActor();
+
+        if (vrActor != nullptr)
+        {
+            vrThread->addActorOffline(vrActor.GetPointer());
+            actorCount++;
+        }
+    }
+
+    int rows = partList->rowCount(index);
+
+    for (int i = 0; i < rows; i++)
+    {
+        QModelIndex childIndex = partList->index(i, 0, index);
+        actorCount += addPartToVRThread(childIndex);
+    }
+
+    return actorCount;
+}
+
+/**
+ * Opens the item options dialog from pushButton_2.
+ */
+void MainWindow::handleButton2()
+{
+    QModelIndex index = ui->treeView->currentIndex();
+
+    if (!index.isValid())
+    {
+        emit statusUpdateMessage("No item selected.", 3000);
+        return;
+    }
+
+    ModelPart* selectedPart =
+        static_cast<ModelPart*>(index.internalPointer());
+
+    if (selectedPart == nullptr)
+    {
+        emit statusUpdateMessage("Invalid item selected.", 3000);
+        return;
+    }
 
     OptionDialog dialog(this);
     dialog.loadFromModelPart(selectedPart);
 
-    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted)
+    {
         dialog.saveToModelPart(selectedPart);
 
-        // Re-render to reflect changes
         updateRender();
 
-        emit statusUpdateMessage(
-            QString("Item updated: ") + selectedPart->data(0).toString(), 0);
-    } else {
-        emit statusUpdateMessage(QString("Edit cancelled"), 0);
+        emit statusUpdateMessage("Item updated: " +
+            selectedPart->data(0).toString(),
+            3000);
+    }
+    else
+    {
+        emit statusUpdateMessage("Edit cancelled.", 3000);
     }
 }
 
-void MainWindow::updateRender() {
-    renderer->RemoveAllViewProps();
+/**
+ * Handles tree item click.
+ */
+void MainWindow::handleTreeClicked()
+{
+    QModelIndex index = ui->treeView->currentIndex();
 
-    // Loop through ALL top-level items, not just the first one
-    int rows = partList->rowCount(QModelIndex());
-    for (int i = 0; i < rows; i++) {
-        updateRenderFromTree(partList->index(i, 0, QModelIndex()));
-    }
-
-    renderer->ResetCamera();
-    renderer->Render();
-    ui->widget->update();  // Force the Qt widget to repaint
-}
-
-void MainWindow::updateRenderFromTree(const QModelIndex& index) {
-    if (index.isValid()) {
-        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-
-        // Only add actor if the part is visible
-        if (selectedPart->visible()) {
-            renderer->AddActor(selectedPart->getActor());
-        }
-    }
-
-    if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren)) {
+    if (!index.isValid())
+    {
+        emit statusUpdateMessage("No item selected.", 3000);
         return;
     }
 
+    ModelPart* selectedPart =
+        static_cast<ModelPart*>(index.internalPointer());
+
+    if (selectedPart == nullptr)
+    {
+        emit statusUpdateMessage("Invalid item selected.", 3000);
+        return;
+    }
+
+    QString text = selectedPart->data(0).toString();
+
+    emit statusUpdateMessage("The selected item is: " + text, 3000);
+}
+
+/**
+ * Open an STL file and add it to the model tree.
+ */
+void MainWindow::on_actionOpen_File_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("Open File"),
+        "C:\\",
+        tr("STL Files (*.stl)")
+    );
+
+    if (fileName.isEmpty())
+    {
+        emit statusUpdateMessage("Open file cancelled.", 3000);
+        return;
+    }
+
+    QFileInfo fileInfo(fileName);
+
+    /*
+     * Use only the filename in the tree view, not the full path.
+     */
+    ModelPart* newPart = new ModelPart({
+        fileInfo.fileName(),
+        "true",
+        "255",
+        "255",
+        "255"
+        });
+
+    /*
+     * Load STL before rendering.
+     */
+    newPart->loadSTL(fileName);
+
+    /*
+     * Add as a child of selected item, or to root if nothing is selected.
+     */
+    QModelIndex index = ui->treeView->currentIndex();
+
+    if (index.isValid())
+    {
+        ModelPart* selectedPart =
+            static_cast<ModelPart*>(index.internalPointer());
+
+        if (selectedPart != nullptr)
+        {
+            selectedPart->appendChild(newPart);
+        }
+        else
+        {
+            partList->getRootItem()->appendChild(newPart);
+        }
+    }
+    else
+    {
+        partList->getRootItem()->appendChild(newPart);
+    }
+
+    partList->refreshModel();
+
+    updateRender();
+
+    emit statusUpdateMessage("File opened: " + fileInfo.fileName(), 3000);
+}
+
+/**
+ * Opens the item options dialog from the menu/action.
+ */
+void MainWindow::on_actionItem_Options_triggered()
+{
+    QModelIndex index = ui->treeView->currentIndex();
+
+    if (!index.isValid())
+    {
+        emit statusUpdateMessage("No item selected.", 3000);
+        return;
+    }
+
+    ModelPart* selectedPart =
+        static_cast<ModelPart*>(index.internalPointer());
+
+    if (selectedPart == nullptr)
+    {
+        emit statusUpdateMessage("Invalid item selected.", 3000);
+        return;
+    }
+
+    OptionDialog dialog(this);
+    dialog.loadFromModelPart(selectedPart);
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        dialog.saveToModelPart(selectedPart);
+
+        updateRender();
+
+        emit statusUpdateMessage("Item updated: " +
+            selectedPart->data(0).toString(),
+            3000);
+    }
+    else
+    {
+        emit statusUpdateMessage("Edit cancelled.", 3000);
+    }
+}
+
+/**
+ * Rebuilds the normal Qt/VTK render view from the tree.
+ */
+void MainWindow::updateRender()
+{
+    if (renderer == nullptr)
+    {
+        return;
+    }
+
+    renderer->RemoveAllViewProps();
+
+    int rows = partList->rowCount(QModelIndex());
+
+    for (int i = 0; i < rows; i++)
+    {
+        QModelIndex index = partList->index(i, 0, QModelIndex());
+        updateRenderFromTree(index);
+    }
+
+    renderer->ResetCamera();
+
+    renderWindow->Render();
+    ui->widget->update();
+}
+
+/**
+ * Recursively adds visible actors from the tree to the normal Qt/VTK renderer.
+ */
+void MainWindow::updateRenderFromTree(const QModelIndex& index)
+{
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    ModelPart* selectedPart =
+        static_cast<ModelPart*>(index.internalPointer());
+
+    if (selectedPart != nullptr && selectedPart->visible())
+    {
+        vtkSmartPointer<vtkActor> actor = selectedPart->getActor();
+
+        if (actor != nullptr)
+        {
+            renderer->AddActor(actor);
+        }
+    }
+
     int rows = partList->rowCount(index);
-    for (int i = 0; i < rows; i++) {
-        updateRenderFromTree(partList->index(i, 0, index));
+
+    for (int i = 0; i < rows; i++)
+    {
+        QModelIndex childIndex = partList->index(i, 0, index);
+        updateRenderFromTree(childIndex);
     }
 }
