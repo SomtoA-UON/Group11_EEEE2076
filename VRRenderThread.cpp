@@ -1,18 +1,14 @@
-/**
- * @file VRRenderThread.cpp
- *
- * EEEE2076 - Software Development Group Design Project
- *
- * VR rendering thread for the Qt/VTK application.
- */
+/**     @file VRRenderThread.cpp
+  *
+  *     EEEE2076 - Software Engineering & VR Project
+  *
+  *     Template to add VR rendering to your application.
+  */
 
 #include "VRRenderThread.h"
 
- /* Qt headers */
-#include <QCoreApplication>
-#include <QFileInfo>
+  /* Qt headers */
 #include <QMutexLocker>
-#include <QString>
 
 /* Standard headers */
 #include <array>
@@ -32,8 +28,8 @@
 /**
  * Constructor.
  *
- * This runs in the main Qt GUI thread. The actual VR renderer does not start
- * until VRRenderThread::start() is called, which then runs VRRenderThread::run().
+ * This is called by MainWindow in the main GUI thread.
+ * The VR renderer itself starts when start() is called.
  */
 VRRenderThread::VRRenderThread(QObject* parent)
     : QThread(parent)
@@ -50,7 +46,7 @@ VRRenderThread::VRRenderThread(QObject* parent)
 /**
  * Destructor.
  *
- * Tries to stop the VR thread safely if it is still running.
+ * Stops the VR loop safely if it is still running.
  */
 VRRenderThread::~VRRenderThread()
 {
@@ -73,10 +69,10 @@ VRRenderThread::~VRRenderThread()
 }
 
 /**
- * Adds an actor to the VR scene before the VR thread starts.
+ * Add actor before VR starts.
  *
- * The coursework brief says these actors must not be the same actors used in
- * the Qt renderer. Each ModelPart should create a new actor and mapper for VR.
+ * Do not pass the normal GUI actor here.
+ * MainWindow should pass a new VR actor created by ModelPart::getNewActor().
  */
 void VRRenderThread::addActorOffline(vtkActor* actor)
 {
@@ -86,9 +82,8 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
     }
 
     /*
-     * Only allow actors to be added before the thread starts.
-     * Once the VR renderer is running, VTK objects should not be changed from
-     * the GUI thread because VTK is not generally thread-safe.
+     * Only allow actors to be added before the thread is running.
+     * This avoids editing VTK objects from the GUI thread while VR is active.
      */
     if (!isRunning())
     {
@@ -97,10 +92,12 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
         double* actorOrigin = actor->GetOrigin();
 
         /*
-         * These transforms come from the template idea.
-         * They may need adjusting depending on your STL model scale/position.
+         * Initial transform from the lecturer template.
+         * If the model appears too far, too low, or rotated badly in VR,
+         * tweak these values later.
          */
         actor->RotateX(-90.0);
+
         actor->AddPosition(
             -actorOrigin[0] + 0.0,
             -actorOrigin[1] - 100.0,
@@ -112,10 +109,7 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
 }
 
 /**
- * Sends commands from the GUI thread to the VR thread.
- *
- * Example:
- * vrThread->issueCommand(VRRenderThread::ROTATE_Z, 1.0);
+ * Send command to the VR thread.
  */
 void VRRenderThread::issueCommand(int cmd, double value)
 {
@@ -147,12 +141,12 @@ void VRRenderThread::issueCommand(int cmd, double value)
 /**
  * Main VR render thread.
  *
- * This function runs separately from the main Qt GUI thread.
+ * This runs separately from the Qt GUI thread.
  */
 void VRRenderThread::run()
 {
     /*
-     * Create a background colour.
+     * Create background colour.
      */
     vtkNew<vtkNamedColors> colors;
 
@@ -160,13 +154,13 @@ void VRRenderThread::run()
     colors->SetColor("BkgColor", backgroundColour.data());
 
     /*
-     * Create the VR renderer.
+     * Create OpenVR renderer.
      */
     renderer = vtkSmartPointer<vtkOpenVRRenderer>::New();
     renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
 
     /*
-     * Add all actors that were added using addActorOffline().
+     * Add all offline actors to the VR renderer.
      */
     {
         QMutexLocker locker(&mutex);
@@ -181,39 +175,24 @@ void VRRenderThread::run()
     }
 
     /*
-     * Create the OpenVR render window.
+     * Create OpenVR render window.
      */
     window = vtkSmartPointer<vtkOpenVRRenderWindow>::New();
-
-    /*
-     * Tell VTK where the OpenVR action/binding JSON files are.
-     *
-     * This expects the JSON files to be copied next to the .exe.
-     * If they are inside a vrbindings folder next to the .exe, this also handles that.
-     */
-    QString actionManifestDirectory = QCoreApplication::applicationDirPath();
-
-    if (!QFileInfo::exists(actionManifestDirectory + "/vtk_openvr_actions.json") &&
-        QFileInfo::exists(actionManifestDirectory + "/vrbindings/vtk_openvr_actions.json"))
-    {
-        actionManifestDirectory += "/vrbindings";
-    }
-
-    window->SetActionManifestDirectory(actionManifestDirectory.toStdString());
 
     window->Initialize();
     window->AddRenderer(renderer);
 
     /*
-     * Create the OpenVR camera.
+     * Create OpenVR camera.
      */
     camera = vtkSmartPointer<vtkOpenVRCamera>::New();
     renderer->SetActiveCamera(camera);
 
     /*
-     * Add a simple scene light.
+     * Add simple light to scene.
      */
     vtkNew<vtkLight> light;
+
     light->SetLightTypeToSceneLight();
     light->SetPosition(5.0, 5.0, 15.0);
     light->SetPositional(true);
@@ -223,12 +202,14 @@ void VRRenderThread::run()
     light->SetAmbientColor(1.0, 1.0, 1.0);
     light->SetSpecularColor(1.0, 1.0, 1.0);
     light->SetIntensity(0.8);
+
     renderer->AddLight(light);
 
     /*
-     * Create the OpenVR interactor.
+     * Create OpenVR interactor.
      */
     interactor = vtkSmartPointer<vtkOpenVRRenderWindowInteractor>::New();
+
     interactor->SetRenderWindow(window);
     interactor->Initialize();
 
@@ -236,12 +217,7 @@ void VRRenderThread::run()
     window->Render();
 
     /*
-     * Start the manual VR event loop.
-     *
-     * This manual loop allows the GUI thread to send commands such as:
-     * - stop VR
-     * - rotate model
-     * - later, update filters/colours/etc.
+     * Start manual VR event loop.
      */
     {
         QMutexLocker locker(&mutex);
@@ -258,7 +234,7 @@ void VRRenderThread::run()
         bool localEndRender = false;
 
         /*
-         * Copy command values safely from shared variables.
+         * Copy command variables safely.
          */
         {
             QMutexLocker locker(&mutex);
@@ -280,7 +256,7 @@ void VRRenderThread::run()
         interactor->DoOneEvent(window, renderer);
 
         /*
-         * Apply animation roughly every 20 ms.
+         * Apply animation every 20 ms.
          */
         auto timeNow = std::chrono::steady_clock::now();
 
@@ -292,30 +268,12 @@ void VRRenderThread::run()
             {
                 vtkActor* actor = nullptr;
 
-                /*
-                 * X rotation.
-                 */
                 actorList->InitTraversal();
+
                 while ((actor = actorList->GetNextActor()) != nullptr)
                 {
                     actor->RotateX(localRotateX);
-                }
-
-                /*
-                 * Y rotation.
-                 */
-                actorList->InitTraversal();
-                while ((actor = actorList->GetNextActor()) != nullptr)
-                {
                     actor->RotateY(localRotateY);
-                }
-
-                /*
-                 * Z rotation.
-                 */
-                actorList->InitTraversal();
-                while ((actor = actorList->GetNextActor()) != nullptr)
-                {
                     actor->RotateZ(localRotateZ);
                 }
             }
@@ -327,7 +285,7 @@ void VRRenderThread::run()
     }
 
     /*
-     * Clean up the VR window when the loop finishes.
+     * Clean shutdown.
      */
     if (window != nullptr)
     {
