@@ -35,6 +35,7 @@ public slots:
     void on_actionItem_Options_triggered();
 
     void startVR();
+    void stopVR();
 
 signals:
     void statusUpdateMessage(const QString& message, int timeout);
