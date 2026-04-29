@@ -40,6 +40,13 @@ MainWindow::MainWindow(QWidget* parent)
         this,
         &MainWindow::startVR);
 
+    connect(ui->stopVRButton,
+        &QPushButton::released,
+        this,
+        &MainWindow::stopVR);
+
+    ui->stopVRButton->setEnabled(false);
+
     connect(ui->pushButton_2,
         &QPushButton::released,
         this,
@@ -120,6 +127,20 @@ MainWindow::~MainWindow()
  * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
  * adds those actors to the VR thread, then starts the thread.
  */
+void MainWindow::stopVR()
+{
+    if (vrThread == nullptr || !vrThread->isRunning())
+    {
+        emit statusUpdateMessage("VR is not running.", 3000);
+        return;
+    }
+
+    vrThread->issueCommand(VRRenderThread::END_RENDER, 0.0);
+
+    ui->stopVRButton->setEnabled(false);
+
+    emit statusUpdateMessage("Stopping VR...", 3000);
+}
 void MainWindow::startVR()
 {
     if (vrThread != nullptr && vrThread->isRunning())
@@ -133,6 +154,7 @@ void MainWindow::startVR()
         emit statusUpdateMessage("Load an STL model before starting VR.", 3000);
         return;
     }
+    
 
     vrThread = new VRRenderThread(this);
 
@@ -161,7 +183,11 @@ void MainWindow::startVR()
         [this]()
         {
             emit statusUpdateMessage("VR stopped.", 3000);
+
             vrThread = nullptr;
+
+            ui->startVRButton->setEnabled(true);
+            ui->stopVRButton->setEnabled(false);
         });
 
     connect(vrThread,
@@ -170,6 +196,9 @@ void MainWindow::startVR()
         &QObject::deleteLater);
 
     vrThread->start();
+
+    ui->startVRButton->setEnabled(false);
+    ui->stopVRButton->setEnabled(true);
 
     emit statusUpdateMessage("VR started.", 3000);
 }
