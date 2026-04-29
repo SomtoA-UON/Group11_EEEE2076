@@ -89,21 +89,15 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
     {
         QMutexLocker locker(&mutex);
 
-        double* actorOrigin = actor->GetOrigin();
-
         /*
-         * Initial transform from the lecturer template.
-         * If the model appears too far, too low, or rotated badly in VR,
-         * tweak these values later.
+         * IMPORTANT:
+         * Do not rotate or move the actor here.
+         *
+         * Some students had an issue where only a white cube appeared in VR.
+         * The fix is to remove the RotateX/AddPosition code from this function
+         * and apply the positioning later in run(), after actors are added to
+         * the VR renderer.
          */
-        actor->RotateX(-90.0);
-
-        actor->AddPosition(
-            -actorOrigin[0] + 0.0,
-            -actorOrigin[1] - 100.0,
-            -actorOrigin[2] - 200.0
-        );
-
         actors->AddItem(actor);
     }
 }
@@ -212,6 +206,35 @@ void VRRenderThread::run()
 
     interactor->SetRenderWindow(window);
     interactor->Initialize();
+
+    /*
+     * Reintroduce initial model positioning here instead of in addActorOffline().
+     *
+     * This is the fix your lecturer mentioned:
+     * - add actors first
+     * - then rotate/move them after they are inside the VR renderer
+     */
+    vtkActorCollection* actorListForInitialTransform = renderer->GetActors();
+
+    if (actorListForInitialTransform != nullptr)
+    {
+        vtkActor* a = nullptr;
+
+        actorListForInitialTransform->InitTraversal();
+
+        while ((a = actorListForInitialTransform->GetNextActor()) != nullptr)
+        {
+            double* ac = a->GetOrigin();
+
+            a->RotateX(-90.0);
+
+            a->AddPosition(
+                -ac[0] + 0.0,
+                -ac[1] - 100.0,
+                -ac[2] - 200.0
+            );
+        }
+    }
 
     renderer->ResetCamera();
     window->Render();
