@@ -110,7 +110,7 @@
     renderer->AddLight(m_light);
     /* ------------------------------------------------------------------ */
 
-    renderer->SetBackground(0.75, 0.75, 0.75);
+    renderer->SetBackground(0, 0, 0);
 
     emit statusUpdateMessage("Ready.", 3000);
 
