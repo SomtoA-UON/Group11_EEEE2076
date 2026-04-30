@@ -17,6 +17,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkDataSetMapper.h>
 #include <vtkProperty.h>
+#include <vtkPlane.h>
 
 
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent )
@@ -27,6 +28,26 @@ ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent )
     set( 3, 255 );
     set( 4, 255 );
     isVisible = true;
+
+    // Defaults for Filter Portion
+    m_clipPlane = vtkSmartPointer<vtkPlane>::New();
+    m_clipPlane->SetOrigin(0.0, 0.0, 0.0);
+    m_clipPlane->SetNormal(-1.0, 0.0, 0.0); // clips along X axis
+
+    m_clipEnabled = false;
+    m_shrinkEnabled = false;
+
+    m_reader = vtkSmartPointer<vtkSTLReader>::New();
+    m_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    m_actor = vtkSmartPointer<vtkActor>::New();
+    m_clipFilter = vtkSmartPointer<vtkClipDataSet>::New();
+    m_shrinkFilter = vtkSmartPointer<vtkShrinkFilter>::New();
+
+    m_mapper->SetInputConnection(m_reader->GetOutputPort());
+    m_actor->SetMapper(m_mapper);
+
+    m_shrinkFactor = 0.8f;
+    m_clipOrigin = 0;
 }
 
 
@@ -137,26 +158,16 @@ bool ModelPart::visible() {
 }
 
 
-void ModelPart::loadSTL( QString fileName ) {
-    /* This is a placeholder function that you will need to modify if you want to use it */
-    
-    /* 1. Use the vtkSTLReader class to load the STL file 
-     *     https://vtk.org/doc/nightly/html/classvtkSTLReader.html
-     */
+void ModelPart::loadSTL(QString fileName) {
     file = vtkSmartPointer<vtkSTLReader>::New();
     file->SetFileName(fileName.toStdString().c_str());
     file->Update();
 
-    /* 2. Initialise the part's vtkMapper */
-    mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper = vtkSmartPointer<vtkDataSetMapper>::New(); // was vtkPolyDataMapper
     mapper->SetInputConnection(file->GetOutputPort());
 
-    /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
-
-    qDebug() << "STL loaded:" << fileName;
-    qDebug() << "Actor is null?" << (actor == nullptr);
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
@@ -166,6 +177,26 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     */
 
    return actor;
+}
+
+void ModelPart::updatePipeline() {
+    vtkAlgorithmOutput* output = file->GetOutputPort();
+
+    if (m_clipEnabled) {
+        m_clipPlane->SetOrigin(m_clipOrigin, 0.0, 0.0); // slider moves clip along X
+        m_clipFilter->SetInputConnection(output);
+        m_clipFilter->SetClipFunction(m_clipPlane.Get());
+        output = m_clipFilter->GetOutputPort();
+    }
+
+    if (m_shrinkEnabled) {
+        m_shrinkFilter->SetInputConnection(output);
+        m_shrinkFilter->SetShrinkFactor(m_shrinkFactor);
+        m_shrinkFilter->Update();
+        output = m_shrinkFilter->GetOutputPort();
+    }
+
+    mapper->SetInputConnection(output);
 }
 
 //vtkActor* ModelPart::getNewActor() {

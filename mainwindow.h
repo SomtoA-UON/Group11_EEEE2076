@@ -25,6 +25,11 @@ public slots:
     void on_actionOpen_File_triggered();
     void on_actionItem_Options_triggered();
 
+private slots:
+    void onTreeContextMenu(const QPoint& pos);
+    void onEditFilters();
+    void onChangeColour();
+
 signals:
     void statusUpdateMessage(const QString& message, int timeout);
 public:

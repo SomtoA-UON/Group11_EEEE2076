@@ -13,6 +13,13 @@
 #include <QString>
 #include <QList>
 #include <QVariant>
+#include <vtkSmartPointer.h>
+#include <vtkSTLReader.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkPlane.h>
+#include <vtkClipDataSet.h>
+#include <vtkShrinkFilter.h>
 
 /* VTK headers - will be needed when VTK used in next worksheet,
  * commented out for now
@@ -130,26 +137,44 @@ public:
       */
     //vtkActor* getNewActor();
 
-private:
-    QList<ModelPart*>                           m_childItems;       /**< List (array) of child items */
-    QList<QVariant>                             m_itemData;         /**< List (array of column data for item */
-    ModelPart*                                  m_parentItem;       /**< Pointer to parent */
+    bool getClipEnabled() const { return m_clipEnabled; }
+    bool getShrinkEnabled() const { return m_shrinkEnabled; }
+    void setClipEnabled(bool enabled) { m_clipEnabled = enabled; }
+    void setShrinkEnabled(bool enabled) { m_shrinkEnabled = enabled; }
+    void updatePipeline();
 
-    /* These are some typical properties that I think the part will need, you might
-     * want to add you own.
-     */
-    bool                                        isVisible;          /**< True/false to indicate if should be visible in model rendering */
-	
-    ///int r, g, b;
-	/* These are vtk properties that will be used to load/render a model of this part,
-	 * commented out for now but will be used later
-	 */
-    vtkSmartPointer<vtkSTLReader>               file;               /**< Datafile from which part loaded */
-    vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
-    vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
-    vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
-};  
+    // Getters/setters
+    float getShrinkFactor() const { return m_shrinkFactor; }
+    int   getClipOrigin() const { return m_clipOrigin; }
+    void  setShrinkFactor(float f) { m_shrinkFactor = f; }
+    void  setClipOrigin(int origin) { m_clipOrigin = origin; }
+
+private:
+    QList<ModelPart*>                           m_childItems;
+    QList<QVariant>                             m_itemData;
+    ModelPart* m_parentItem;
+
+    bool                                        isVisible;
+
+    vtkSmartPointer<vtkSTLReader>               file;
+    vtkSmartPointer<vtkMapper>                  mapper;
+    vtkSmartPointer<vtkActor>                   actor;
+    vtkColor3<unsigned char>                    colour;
+
+    bool m_clipEnabled;
+    bool m_shrinkEnabled;
+
+    vtkSmartPointer<vtkSTLReader>               m_reader;
+    vtkSmartPointer<vtkPolyDataMapper>          m_mapper;
+    vtkSmartPointer<vtkActor>                   m_actor;
+    vtkSmartPointer<vtkPlane>                   m_clipPlane;    // only once
+    vtkSmartPointer<vtkClipDataSet>             m_clipFilter;
+    vtkSmartPointer<vtkShrinkFilter>            m_shrinkFilter;
+    // Private members
+    float m_shrinkFactor;
+    int   m_clipOrigin;
+};
+
 
 
 #endif
-
