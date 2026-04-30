@@ -251,78 +251,6 @@ void MainWindow::onLightPositionChanged()
  * Existing slots (unchanged)
  * -------------------------------------------------------------------------- */
 
-void MainWindow::handleButton1() {
-    emit statusUpdateMessage(QString("Button 1 was clicked"), 0);
-}
-
-void MainWindow::handleButton2() {
-    OptionDialog dialog(this);
-
-    QModelIndex index = ui->treeView->currentIndex();
-    if (index.isValid()) {
-        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        dialog.loadFromModelPart(selectedPart);
-    }
-
-    if (dialog.exec() == QDialog::Accepted) {
-        QModelIndex index = ui->treeView->currentIndex();
-        if (index.isValid()) {
-            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-            dialog.saveToModelPart(selectedPart);
-        }
-        emit statusUpdateMessage(QString("Dialog accepted"), 0);
-    }
-    else {
-        emit statusUpdateMessage(QString("Dialog rejected"), 0);
-    }
-}
-
-void MainWindow::handleTreeClicked() {
-    QModelIndex index = ui->treeView->currentIndex();
-    ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-    QString text = selectedPart->data(0).toString();
-    emit statusUpdateMessage(QString("The selected item is: ") + text, 0);
-}
-
-void MainWindow::on_actionOpen_File_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(
-        this,
-        tr("Open File"),
-        "C:\\",
-        tr("STL Files (*.stl);;Text Files (*.txt)"));
-
-    if (!fileName.isEmpty()) {
-
-        ModelPart* newPart = new ModelPart({ fileName, "true", "255", "255", "255" });
-
-        QModelIndex index = ui->treeView->currentIndex();
-
-        if (index.isValid()) {
-            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-            selectedPart->appendChild(newPart);
-        }
-        else {
-            partList->getRootItem()->appendChild(newPart);
-        }
-
-        partList->refreshModel();
-
-        newPart->loadSTL(fileName);
-
-        updateRender();
-
-        emit statusUpdateMessage(QString("File opened: ") + fileName, 0);
-    }
-}
-
-void MainWindow::on_actionItem_Options_triggered() {
-    QModelIndex index = ui->treeView->currentIndex();
-
-    if (!index.isValid()) {
-        emit statusUpdateMessage(QString("No item selected"), 0);
-        return;
-    }
-
 /**
  * Start the VR renderer.
  *
@@ -491,6 +419,9 @@ void MainWindow::handleButton2()
 void MainWindow::handleTreeClicked()
 {
     QModelIndex index = ui->treeView->currentIndex();
+    ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
+    QString text = selectedPart->data(0).toString();
+    emit statusUpdateMessage(QString("The selected item is: ") + text, 0);
 
     int rows = partList->rowCount(QModelIndex());
     for (int i = 0; i < rows; i++) {
@@ -505,33 +436,6 @@ void MainWindow::handleTreeClicked()
         emit statusUpdateMessage("No item selected.", 3000);
     }
     return;
-}
-
-void MainWindow::updateRenderFromTree(const QModelIndex& index) {
-    if (index.isValid()) {
-        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-
-        if (selectedPart->visible()) {
-            renderer->AddActor(selectedPart->getActor());
-        }
-    }
-
-    if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren)) {
-        return;
-    }
-
-    ModelPart* selectedPart =
-        static_cast<ModelPart*>(index.internalPointer());
-
-    if (selectedPart == nullptr)
-    {
-        emit statusUpdateMessage("Invalid item selected.", 3000);
-        return;
-    }
-
-    QString text = selectedPart->data(0).toString();
-
-    emit statusUpdateMessage("The selected item is: " + text, 3000);
 }
 
 /**
@@ -771,6 +675,7 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index)
         if (actor != nullptr)
         {
             renderer->AddActor(actor);
+            emit statusUpdateMessage("Invalid item selected.", 3000);
         }
     }
 

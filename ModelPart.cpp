@@ -19,9 +19,9 @@
 #include <vtkProperty.h>
 #include <vtkPlane.h>
 
-/**
- * Constructor.
- */
+   /**
+    * Constructor.
+    */
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     : m_itemData(data), m_parentItem(parent) {
 
@@ -36,8 +36,9 @@ ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     m_reader = vtkSmartPointer<vtkSTLReader>::New();
     m_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     m_actor = vtkSmartPointer<vtkActor>::New();
-    m_clipFilter = vtkSmartPointer<vtkClipDataSet>::New();
+    m_clipFilter = vtkSmartPointer<vtkClipPolyData>::New();
     m_shrinkFilter = vtkSmartPointer<vtkShrinkFilter>::New();
+    m_geometryFilter = vtkSmartPointer<vtkGeometryFilter>::New();
 
     m_mapper->SetInputConnection(m_reader->GetOutputPort());
     m_actor->SetMapper(m_mapper);
@@ -234,15 +235,12 @@ void ModelPart::loadSTL(QString fileName)
     m_reader->SetFileName(fileName.toStdString().c_str());
     m_reader->Update();
 
-    m_mapper = vtkSmartPointer<vtkDataSetMapper>::New(); // was vtkPolyDataMapper
-    m_mapper->SetInputConnection(m_reader->GetOutputPort());
-
+    m_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     m_actor = vtkSmartPointer<vtkActor>::New();
     m_actor->SetMapper(m_mapper);
 
-
     /*
-     * 4. Apply current colour and visibility.
+     * 2. Apply current colour and visibility.
      */
     m_actor->GetProperty()->SetColor(
         static_cast<double>(getColourR()) / 255.0,
@@ -251,6 +249,11 @@ void ModelPart::loadSTL(QString fileName)
     );
 
     m_actor->SetVisibility(isVisible);
+
+    /*
+     * 3. Wire the pipeline (respects clip/shrink filter state).
+     */
+    updatePipeline();
 
     qDebug() << "STL loaded:" << fileName;
     qDebug() << "Actor is null?" << (m_actor == nullptr);
@@ -267,9 +270,10 @@ void ModelPart::updatePipeline() {
     vtkAlgorithmOutput* output = m_reader->GetOutputPort();
 
     if (m_clipEnabled) {
-        m_clipPlane->SetOrigin(m_clipOrigin, 0.0, 0.0); // slider moves clip along X
+        m_clipPlane->SetOrigin(m_clipOrigin, 0.0, 0.0);
         m_clipFilter->SetInputConnection(output);
         m_clipFilter->SetClipFunction(m_clipPlane.Get());
+        m_clipFilter->Update();
         output = m_clipFilter->GetOutputPort();
     }
 
@@ -277,7 +281,10 @@ void ModelPart::updatePipeline() {
         m_shrinkFilter->SetInputConnection(output);
         m_shrinkFilter->SetShrinkFactor(m_shrinkFactor);
         m_shrinkFilter->Update();
-        output = m_shrinkFilter->GetOutputPort();
+        // vtkShrinkFilter outputs vtkUnstructuredGrid; convert back to vtkPolyData
+        m_geometryFilter->SetInputConnection(m_shrinkFilter->GetOutputPort());
+        m_geometryFilter->Update();
+        output = m_geometryFilter->GetOutputPort();
     }
 
     m_mapper->SetInputConnection(output);

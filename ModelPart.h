@@ -18,16 +18,17 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkPlane.h>
-#include <vtkClipDataSet.h>
+#include <vtkClipPolyData.h>
 #include <vtkShrinkFilter.h>
+#include <vtkGeometryFilter.h>
 
-    /* VTK headers - will be needed when VTK used in next worksheet,
-   * commented out for now
-   *
-   * Note that there are a few function definitions and variables
-   * commented out below - this is because you haven't yet installed
-   * the VTK library which is needed.
-   */
+  /* VTK headers - will be needed when VTK used in next worksheet,
+ * commented out for now
+ *
+ * Note that there are a few function definitions and variables
+ * commented out below - this is because you haven't yet installed
+ * the VTK library which is needed.
+ */
 
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
@@ -177,9 +178,10 @@ private:
     vtkSmartPointer<vtkSTLReader>               m_reader;
     vtkSmartPointer<vtkPolyDataMapper>          m_mapper;
     vtkSmartPointer<vtkActor>                   m_actor;
-    vtkSmartPointer<vtkPlane>                   m_clipPlane;    // only once
-    vtkSmartPointer<vtkClipDataSet>             m_clipFilter;
+    vtkSmartPointer<vtkPlane>                   m_clipPlane;
+    vtkSmartPointer<vtkClipPolyData>            m_clipFilter;
     vtkSmartPointer<vtkShrinkFilter>            m_shrinkFilter;
+    vtkSmartPointer<vtkGeometryFilter>          m_geometryFilter;
     // Private members
     float m_shrinkFactor;
     int   m_clipOrigin;
