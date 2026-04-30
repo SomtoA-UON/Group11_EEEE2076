@@ -23,25 +23,6 @@
  * Constructor.
  */
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
-    : m_itemData(data),
-    m_parentItem(parent)
-{
-    /*
-     * Your tree uses five columns:
-     * 0 = part name
-     * 1 = visible
-     * 2 = red
-     * 3 = green
-     * 4 = blue
-     *
-     * This makes sure the list always has enough columns.
-     */
-    while (m_itemData.size() < 5)
-    {
-        m_itemData.append(QVariant());
-    }
-
-ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     : m_itemData(data), m_parentItem(parent) {
 
     // Defaults for Filter Portion
@@ -80,13 +61,6 @@ ModelPart::~ModelPart()
 /**
  * Add child item.
  */
-void ModelPart::appendChild(ModelPart* item)
-{
-    if (item == nullptr)
-    {
-        return;
-    }
-
 void ModelPart::appendChild(ModelPart* item) {
     item->m_parentItem = this;
     m_childItems.append(item);
@@ -194,9 +168,9 @@ void ModelPart::setColour(const unsigned char R,
      * VTK uses colour values between 0.0 and 1.0,
      * but the GUI/tree stores them between 0 and 255.
      */
-    if (actor != nullptr)
+    if (m_actor != nullptr)
     {
-        actor->GetProperty()->SetColor(
+        m_actor->GetProperty()->SetColor(
             static_cast<double>(R) / 255.0,
             static_cast<double>(G) / 255.0,
             static_cast<double>(B) / 255.0
@@ -237,9 +211,9 @@ void ModelPart::setVisible(bool isVisible)
 
     set(1, isVisible ? "true" : "false");
 
-    if (actor != nullptr)
+    if (m_actor != nullptr)
     {
-        actor->SetVisibility(isVisible);
+        m_actor->SetVisibility(isVisible);
     }
 }
 
@@ -256,41 +230,41 @@ void ModelPart::loadSTL(QString fileName)
     /*
      * 1. Create STL reader.
      */
-    file = vtkSmartPointer<vtkSTLReader>::New();
-    file->SetFileName(fileName.toStdString().c_str());
-    file->Update();
+    m_reader = vtkSmartPointer<vtkSTLReader>::New();
+    m_reader->SetFileName(fileName.toStdString().c_str());
+    m_reader->Update();
 
-    mapper = vtkSmartPointer<vtkDataSetMapper>::New(); // was vtkPolyDataMapper
-    mapper->SetInputConnection(file->GetOutputPort());
+    m_mapper = vtkSmartPointer<vtkDataSetMapper>::New(); // was vtkPolyDataMapper
+    m_mapper->SetInputConnection(m_reader->GetOutputPort());
 
-    actor = vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
+    m_actor = vtkSmartPointer<vtkActor>::New();
+    m_actor->SetMapper(m_mapper);
 
 
     /*
      * 4. Apply current colour and visibility.
      */
-    actor->GetProperty()->SetColor(
+    m_actor->GetProperty()->SetColor(
         static_cast<double>(getColourR()) / 255.0,
         static_cast<double>(getColourG()) / 255.0,
         static_cast<double>(getColourB()) / 255.0
     );
 
-    actor->SetVisibility(isVisible);
+    m_actor->SetVisibility(isVisible);
 
     qDebug() << "STL loaded:" << fileName;
-    qDebug() << "Actor is null?" << (actor == nullptr);
+    qDebug() << "Actor is null?" << (m_actor == nullptr);
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
     /* Return GUI
      */
 
-    return actor;
+    return m_actor;
 }
 
 void ModelPart::updatePipeline() {
-    vtkAlgorithmOutput* output = file->GetOutputPort();
+    vtkAlgorithmOutput* output = m_reader->GetOutputPort();
 
     if (m_clipEnabled) {
         m_clipPlane->SetOrigin(m_clipOrigin, 0.0, 0.0); // slider moves clip along X
@@ -306,7 +280,7 @@ void ModelPart::updatePipeline() {
         output = m_shrinkFilter->GetOutputPort();
     }
 
-    mapper->SetInputConnection(output);
+    m_mapper->SetInputConnection(output);
 }
 
 /**
@@ -324,7 +298,7 @@ void ModelPart::updatePipeline() {
  */
 vtkSmartPointer<vtkActor> ModelPart::getNewActor()
 {
-    if (file == nullptr || actor == nullptr)
+    if (m_reader == nullptr || m_actor == nullptr)
     {
         return nullptr;
     }
@@ -336,7 +310,7 @@ vtkSmartPointer<vtkActor> ModelPart::getNewActor()
     vtkSmartPointer<vtkPolyDataMapper> newMapper =
         vtkSmartPointer<vtkPolyDataMapper>::New();
 
-    newMapper->SetInputConnection(file->GetOutputPort());
+    newMapper->SetInputConnection(m_reader->GetOutputPort());
 
     /*
      * 2. Create a new actor for VR.
@@ -352,27 +326,27 @@ vtkSmartPointer<vtkActor> ModelPart::getNewActor()
      * This means colour/material changes on the GUI actor can also be seen
      * by the VR actor because they share the same vtkProperty object.
      */
-    newActor->SetProperty(actor->GetProperty());
+    newActor->SetProperty(m_actor->GetProperty());
 
     /*
      * 4. Copy visibility and transform values.
      */
-    newActor->SetVisibility(actor->GetVisibility());
+    newActor->SetVisibility(m_actor->GetVisibility());
 
     double position[3];
-    actor->GetPosition(position);
+    m_actor->GetPosition(position);
     newActor->SetPosition(position);
 
     double orientation[3];
-    actor->GetOrientation(orientation);
+    m_actor->GetOrientation(orientation);
     newActor->SetOrientation(orientation);
 
     double scale[3];
-    actor->GetScale(scale);
+    m_actor->GetScale(scale);
     newActor->SetScale(scale);
 
     double origin[3];
-    actor->GetOrigin(origin);
+    m_actor->GetOrigin(origin);
     newActor->SetOrigin(origin);
 
     return newActor;

@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
-    QMutexLocker lock(&m_mutex);
-    m_renderer->RemoveActor(oldActor);
-    m_renderer->AddActor(newActor);
-=======
 /**     @file VRRenderThread.cpp
   *
   *     EEEE2076 - Software Engineering & VR Project
@@ -138,6 +132,12 @@ void VRRenderThread::issueCommand(int cmd, double value)
     default:
         break;
     }
+}
+
+void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
+    QMutexLocker lock(&mutex);
+    renderer->RemoveActor(oldActor);
+    renderer->AddActor(newActor);
 }
 
 /**
@@ -347,5 +347,4 @@ void VRRenderThread::run()
     window = nullptr;
     renderer = nullptr;
     camera = nullptr;
->>>>>>> Adding-VR-to-GUI
 }

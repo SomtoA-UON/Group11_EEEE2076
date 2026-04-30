@@ -169,9 +169,6 @@ private:
 
     bool                                    isVisible;      /**< Visibility flag */
 
-    vtkSmartPointer<vtkSTLReader>               file;
-    vtkSmartPointer<vtkMapper>                  mapper;
-    vtkSmartPointer<vtkActor>                   actor;
     vtkColor3<unsigned char>                    colour;
 
     bool m_clipEnabled;
@@ -187,9 +184,5 @@ private:
     float m_shrinkFactor;
     int   m_clipOrigin;
 };
-
-    vtkSmartPointer<vtkSTLReader>           file;           /**< STL reader */
-    vtkSmartPointer<vtkPolyDataMapper>      mapper;         /**< GUI mapper */
-    vtkSmartPointer<vtkActor>               actor;          /**< GUI actor */
 
 #endif

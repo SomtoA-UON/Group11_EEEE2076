@@ -58,10 +58,6 @@ private slots:
 signals:
     void statusUpdateMessage(const QString& message, int timeout);
 
-public:
-    MainWindow(QWidget* parent = nullptr);
-    ~MainWindow();
-
 private:
     Ui::MainWindow* ui;
     ModelPartList* partList;

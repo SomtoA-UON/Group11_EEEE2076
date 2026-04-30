@@ -72,6 +72,8 @@ public:
      */
     void issueCommand(int cmd, double value);
 
+    void updateActor(vtkActor* oldActor, vtkActor* newActor);
+
 protected:
     /**
      * Main thread function. Runs when start() is called.
