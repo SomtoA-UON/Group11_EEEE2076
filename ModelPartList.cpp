@@ -10,11 +10,11 @@
 #include "ModelPartList.h"
 #include "ModelPart.h"
 
-ModelPartList::ModelPartList( const QString& data, QObject* parent ) : QAbstractItemModel(parent) {
+ModelPartList::ModelPartList(const QString& data, QObject* parent) : QAbstractItemModel(parent) {
     /* Have option to specify number of visible properties for each item in tree - the root item
      * acts as the column headers
      */
-    rootItem = new ModelPart( { tr("Part"), tr("Visible?"), tr("R"), tr("G"), tr("B") } );
+    rootItem = new ModelPart({ tr("Part"), tr("Visible?"), tr("R"), tr("G"), tr("B") });
 }
 
 
@@ -24,17 +24,17 @@ ModelPartList::~ModelPartList() {
 }
 
 
-int ModelPartList::columnCount( const QModelIndex& parent ) const {
+int ModelPartList::columnCount(const QModelIndex& parent) const {
     Q_UNUSED(parent);
 
     return rootItem->columnCount();
 }
 
 
-QVariant ModelPartList::data( const QModelIndex& index, int role ) const {
+QVariant ModelPartList::data(const QModelIndex& index, int role) const {
     /* If the item index isnt valid, return a new, empty QVariant (QVariant is generic datatype
      * that could be any valid QT class) */
-    if( !index.isValid() )
+    if (!index.isValid())
         return QVariant();
 
     /* Role represents what this data will be used for, we only need deal with the case
@@ -44,25 +44,25 @@ QVariant ModelPartList::data( const QModelIndex& index, int role ) const {
         return QVariant();
 
     /* Get a a pointer to the item referred to by the QModelIndex */
-    ModelPart* item = static_cast<ModelPart*>( index.internalPointer() );
+    ModelPart* item = static_cast<ModelPart*>(index.internalPointer());
 
-    /* Each item in the tree has a number of columns ("Part" and "Visible" in this 
+    /* Each item in the tree has a number of columns ("Part" and "Visible" in this
      * initial example) return the column requested by the QModelIndex */
-    return item->data( index.column() );
+    return item->data(index.column());
 }
 
 
-Qt::ItemFlags ModelPartList::flags( const QModelIndex& index ) const {
-    if( !index.isValid() )
+Qt::ItemFlags ModelPartList::flags(const QModelIndex& index) const {
+    if (!index.isValid())
         return Qt::NoItemFlags;
 
-    return QAbstractItemModel::flags( index );
+    return QAbstractItemModel::flags(index);
 }
 
 
-QVariant ModelPartList::headerData( int section, Qt::Orientation orientation, int role ) const {
-    if( orientation == Qt::Horizontal && role == Qt::DisplayRole )
-        return rootItem->data( section );
+QVariant ModelPartList::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+        return rootItem->data(section);
 
     return QVariant();
 }
@@ -70,41 +70,41 @@ QVariant ModelPartList::headerData( int section, Qt::Orientation orientation, in
 
 QModelIndex ModelPartList::index(int row, int column, const QModelIndex& parent) const {
     ModelPart* parentItem;
-    
-    if( !parent.isValid() || !hasIndex(row, column, parent) )
+
+    if (!parent.isValid() || !hasIndex(row, column, parent))
         parentItem = rootItem;              // default to selecting root 
     else
         parentItem = static_cast<ModelPart*>(parent.internalPointer());
 
     ModelPart* childItem = parentItem->child(row);
-    if( childItem )
+    if (childItem)
         return createIndex(row, column, childItem);
-    
-    
+
+
     return QModelIndex();
 }
 
 
-QModelIndex ModelPartList::parent( const QModelIndex& index ) const {
+QModelIndex ModelPartList::parent(const QModelIndex& index) const {
     if (!index.isValid())
         return QModelIndex();
 
     ModelPart* childItem = static_cast<ModelPart*>(index.internalPointer());
     ModelPart* parentItem = childItem->parentItem();
 
-    if( parentItem == rootItem )
+    if (parentItem == rootItem)
         return QModelIndex();
 
-    return createIndex( parentItem->row(), 0, parentItem );
+    return createIndex(parentItem->row(), 0, parentItem);
 }
 
 
-int ModelPartList::rowCount( const QModelIndex& parent ) const {
+int ModelPartList::rowCount(const QModelIndex& parent) const {
     ModelPart* parentItem;
-    if( parent.column() > 0 )
+    if (parent.column() > 0)
         return 0;
 
-    if( !parent.isValid() )
+    if (!parent.isValid())
         parentItem = rootItem;
     else
         parentItem = static_cast<ModelPart*>(parent.internalPointer());
@@ -114,24 +114,24 @@ int ModelPartList::rowCount( const QModelIndex& parent ) const {
 
 
 ModelPart* ModelPartList::getRootItem() {
-    return rootItem; 
+    return rootItem;
 }
 
 
 
-QModelIndex ModelPartList::appendChild(QModelIndex& parent, const QList<QVariant>& data) {      
+QModelIndex ModelPartList::appendChild(QModelIndex& parent, const QList<QVariant>& data) {
     ModelPart* parentPart;
 
     if (parent.isValid())
         parentPart = static_cast<ModelPart*>(parent.internalPointer());
     else {
         parentPart = rootItem;
-        parent = createIndex(0, 0, rootItem );
+        parent = createIndex(0, 0, rootItem);
     }
 
-    beginInsertRows( parent, rowCount(parent), rowCount(parent) ); 
+    beginInsertRows(parent, rowCount(parent), rowCount(parent));
 
-    ModelPart* childPart = new ModelPart( data, parentPart );
+    ModelPart* childPart = new ModelPart(data, parentPart);
 
     parentPart->appendChild(childPart);
 
@@ -147,4 +147,23 @@ QModelIndex ModelPartList::appendChild(QModelIndex& parent, const QList<QVariant
 void ModelPartList::refreshModel() {
     beginResetModel();
     endResetModel();
+}
+
+void ModelPartList::removeItem(const QModelIndex& index) {
+    if (!index.isValid())
+        return;
+
+    ModelPart* item = static_cast<ModelPart*>(index.internalPointer());
+    ModelPart* parentPart = item->parentItem();
+
+    /* Determine the parent QModelIndex (invalid = root) */
+    QModelIndex parentIndex = parent(index);
+
+    int row = index.row();
+    beginRemoveRows(parentIndex, row, row);
+
+    /* Remove from the parent's child list and delete the subtree */
+    parentPart->removeChild(row);
+
+    endRemoveRows();
 }

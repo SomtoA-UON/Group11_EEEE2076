@@ -325,6 +325,7 @@ void MainWindow::onTreeContextMenu(const QPoint& pos) {
     QMenu menu(this);
     menu.addAction("Edit Filters", this, &MainWindow::onEditFilters);
     menu.addAction("Change Colour", this, &MainWindow::onChangeColour);
+    menu.addAction("Remove Item", this, &MainWindow::onRemoveItem);
     menu.exec(ui->treeView->viewport()->mapToGlobal(pos));
 }
 
@@ -381,4 +382,20 @@ void MainWindow::onEditFilters() {
 
 void MainWindow::onChangeColour() {
     // TODO
+}
+
+void MainWindow::onRemoveItem() {
+    QModelIndex index = ui->treeView->currentIndex();
+    if (!index.isValid()) {
+        emit statusUpdateMessage(QString("No item selected to remove"), 0);
+        return;
+    }
+
+    ModelPart* part = static_cast<ModelPart*>(index.internalPointer());
+    QString name = part->data(0).toString();
+
+    partList->removeItem(index);
+    updateRender();
+
+    emit statusUpdateMessage(QString("Removed: ") + name, 0);
 }

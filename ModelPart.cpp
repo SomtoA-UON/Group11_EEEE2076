@@ -11,22 +11,22 @@
 #include <QDebug>
 
 
-/* Commented out for now, will be uncommented later when you have
- * installed the VTK library
- */
+  /* Commented out for now, will be uncommented later when you have
+   * installed the VTK library
+   */
 #include <vtkSmartPointer.h>
 #include <vtkDataSetMapper.h>
 #include <vtkProperty.h>
 #include <vtkPlane.h>
 
 
-ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent )
+ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     : m_itemData(data), m_parentItem(parent) {
 
     /* You probably want to give the item a default colour */
-    set( 2, 255 );
-    set( 3, 255 );
-    set( 4, 255 );
+    set(2, 255);
+    set(3, 255);
+    set(4, 255);
     isVisible = true;
 
     // Defaults for Filter Portion
@@ -56,16 +56,20 @@ ModelPart::~ModelPart() {
 }
 
 
-void ModelPart::appendChild( ModelPart* item ) {
-    /* Add another model part as a child of this part
-     * (it will appear as a sub-branch in the treeview)
-     */
+void ModelPart::appendChild(ModelPart* item) {
     item->m_parentItem = this;
     m_childItems.append(item);
 }
 
+void ModelPart::removeChild(int row) {
+    if (row < 0 || row >= m_childItems.size())
+        return;
+    ModelPart* child = m_childItems.takeAt(row);
+    delete child;   /* destructor recursively deletes grandchildren */
+}
 
-ModelPart* ModelPart::child( int row ) {
+
+ModelPart* ModelPart::child(int row) {
     /* Return pointer to child item in row below this item.
      */
     if (row < 0 || row >= m_childItems.size())
@@ -87,9 +91,9 @@ int ModelPart::columnCount() const {
 }
 
 QVariant ModelPart::data(int column) const {
-    /* Return the data associated with a column of this item 
+    /* Return the data associated with a column of this item
      *  Note on the QVariant type - it is a generic placeholder type
-     *  that can take on the type of most Qt classes. It allows each 
+     *  that can take on the type of most Qt classes. It allows each
      *  column or property to store data of an arbitrary type.
      */
     if (column < 0 || column >= m_itemData.size())
@@ -98,8 +102,8 @@ QVariant ModelPart::data(int column) const {
 }
 
 
-void ModelPart::set(int column, const QVariant &value) {
-    /* Set the data associated with a column of this item 
+void ModelPart::set(int column, const QVariant& value) {
+    /* Set the data associated with a column of this item
      */
     if (column < 0 || column >= m_itemData.size())
         return;
@@ -126,7 +130,7 @@ void ModelPart::setColour(const unsigned char R, const unsigned char G, const un
     set(3, G);
     set(4, B);
     if (actor != nullptr) {
-        actor->GetProperty()->SetColor(R/255.0, G/255.0, B/255.0);
+        actor->GetProperty()->SetColor(R / 255.0, G / 255.0, B / 255.0);
     };
 }
 
@@ -171,12 +175,12 @@ void ModelPart::loadSTL(QString fileName) {
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
-   /* This is a placeholder function that you will need to modify if you want to use it */
-   /* Needs to return a smart pointer to the vtkActor to allow
-    * part to be rendered.
-    */
+    /* This is a placeholder function that you will need to modify if you want to use it */
+    /* Needs to return a smart pointer to the vtkActor to allow
+     * part to be rendered.
+     */
 
-   return actor;
+    return actor;
 }
 
 void ModelPart::updatePipeline() {
@@ -201,28 +205,27 @@ void ModelPart::updatePipeline() {
 
 //vtkActor* ModelPart::getNewActor() {
     /* This is a placeholder function that you will need to modify if you want to use it
-     * 
-     * The default mapper/actor combination can only be used to render the part in 
+     *
+     * The default mapper/actor combination can only be used to render the part in
      * the GUI, it CANNOT also be used to render the part in VR. This means you need
      * to create a second mapper/actor combination for use in VR - that is the role
      * of this function. */
-     
-     
+
+
      /* 1. Create new mapper */
-     
+
      /* 2. Create new actor and link to mapper */
-     
-     /* 3. Link the vtkProperties of the original actor to the new actor. This means 
+
+     /* 3. Link the vtkProperties of the original actor to the new actor. This means
       *    if you change properties of the original part (colour, position, etc), the
       *    changes will be reflected in the GUI AND VR rendering.
-      *    
+      *
       *    See the vtkActor documentation, particularly the GetProperty() and SetProperty()
       *    functions.
       */
-    
 
-    /* The new vtkActor pointer must be returned here */
-//    return nullptr;
-    
-//}
 
+      /* The new vtkActor pointer must be returned here */
+  //    return nullptr;
+
+  //}

@@ -6,7 +6,7 @@
   *
   *     P Evans 2022
   */
-  
+
 #ifndef VIEWER_MODELPART_H
 #define VIEWER_MODELPART_H
 
@@ -21,13 +21,13 @@
 #include <vtkClipDataSet.h>
 #include <vtkShrinkFilter.h>
 
-/* VTK headers - will be needed when VTK used in next worksheet,
- * commented out for now
- *
- * Note that there are a few function definitions and variables
- * commented out below - this is because you haven't yet installed
- * the VTK library which is needed.
- */
+  /* VTK headers - will be needed when VTK used in next worksheet,
+   * commented out for now
+   *
+   * Note that there are a few function definitions and variables
+   * commented out below - this is because you haven't yet installed
+   * the VTK library which is needed.
+   */
 #include <vtkSmartPointer.h>
 #include <vtkMapper.h>
 #include <vtkActor.h>
@@ -56,6 +56,11 @@ public:
       */
     void appendChild(ModelPart* item);
 
+    /** Remove and delete the child at the given row.
+      * @param row Index of the child to remove.
+      */
+    void removeChild(int row);
+
     /** Return child at position 'row' below this item
       * @param row is the row number (below this item)
       * @return pointer to the item requested.
@@ -71,9 +76,9 @@ public:
                                      * valid, but 'get' type functions are.
                                      */
 
-    /** Get number of data items (2 - part name and visibility string) in this case.
-      * @return number of visible data columns
-      */
+                                     /** Get number of data items (2 - part name and visibility string) in this case.
+                                       * @return number of visible data columns
+                                       */
     int columnCount() const;
 
     /** Return the data item at a particular column for this item.
@@ -90,7 +95,7 @@ public:
       * @param column is the index of the property to set
       * @param value is the value to apply
       */
-    void set( int column, const QVariant& value );
+    void set(int column, const QVariant& value);
 
     /** Get pointer to parent item
       * @return pointer to parent item
@@ -118,11 +123,11 @@ public:
     void setVisible(bool isVisible);
 
     /** Get visible flag
-      * @return visible flag as boolean 
+      * @return visible flag as boolean
       */
     bool visible();
-	
-	/** Load STL file
+
+    /** Load STL file
       * @param fileName
       */
     void loadSTL(QString fileName);
@@ -135,7 +140,7 @@ public:
     /** Return new actor for use in VR
       * @return pointer to new actor
       */
-    //vtkActor* getNewActor();
+      //vtkActor* getNewActor();
 
     bool getClipEnabled() const { return m_clipEnabled; }
     bool getShrinkEnabled() const { return m_shrinkEnabled; }

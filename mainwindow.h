@@ -5,15 +5,15 @@
 #include "ModelPart.h"
 #include "ModelPartList.h"
 
+#include <QDoubleSpinBox>
 #include <vtkSmartPointer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkLight.h>
-#include <QDoubleSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
@@ -31,6 +31,7 @@ private slots:
     void onTreeContextMenu(const QPoint& pos);
     void onEditFilters();
     void onChangeColour();
+    void onRemoveItem();
 
     /** Called when the light intensity slider value changes.
       * @param value Slider integer value (0-100), mapped to intensity 0.0-1.0.
@@ -46,11 +47,11 @@ signals:
     void statusUpdateMessage(const QString& message, int timeout);
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     ModelPartList* partList;
 
     vtkSmartPointer<vtkRenderer>               renderer;
