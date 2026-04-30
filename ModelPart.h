@@ -21,79 +21,67 @@
 #include <vtkClipDataSet.h>
 #include <vtkShrinkFilter.h>
 
-  /* VTK headers - will be needed when VTK used in next worksheet,
+    /* VTK headers - will be needed when VTK used in next worksheet,
    * commented out for now
    *
    * Note that there are a few function definitions and variables
    * commented out below - this is because you haven't yet installed
    * the VTK library which is needed.
    */
+
 #include <vtkSmartPointer.h>
-#include <vtkMapper.h>
 #include <vtkActor.h>
 #include <vtkSTLReader.h>
 #include <vtkColor.h>
-#include <vtkSTLReader.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkSmartPointer.h>
 
-class ModelPart {
+class ModelPart
+{
 public:
     /** Constructor
-     * @param data is a List (array) of strings for each property of this item (part name and visiblity in our case
-     * @param parent is the parent of this item (one level up in tree)
+     * @param data is a list of strings/properties for this item
+     * @param parent is the parent of this item in the tree
      */
     ModelPart(const QList<QVariant>& data, ModelPart* parent = nullptr);
 
     /** Destructor
-      * Needs to free array of child items
+      * Frees all child items
       */
     ~ModelPart();
 
-    /** Add a child to this item.
-      * @param item Pointer to child object (must already be allocated using new)
+    /** Add a child to this item
+      * @param item pointer to child object
       */
     void appendChild(ModelPart* item);
 
-    /** Remove and delete the child at the given row.
-      * @param row Index of the child to remove.
-      */
     void removeChild(int row);
 
-    /** Return child at position 'row' below this item
-      * @param row is the row number (below this item)
-      * @return pointer to the item requested.
+    /** Return child at position row below this item
+      * @param row child row number
+      * @return pointer to child item
       */
     ModelPart* child(int row);
 
-    /** Return number of children to this item
+    /** Return number of children
       * @return number of children
       */
-    int childCount() const;         /* Note on the 'const' keyword - it means that this function is valid for
-                                     * constant instances of this class. If a class is declared 'const' then it
-                                     * cannot be modifed, this means that 'set' type functions are usually not
-                                     * valid, but 'get' type functions are.
-                                     */
+    int childCount() const;
 
-                                     /** Get number of data items (2 - part name and visibility string) in this case.
-                                       * @return number of visible data columns
-                                       */
+    /** Return number of columns/properties
+      * @return number of visible data columns
+      */
+
     int columnCount() const;
 
-    /** Return the data item at a particular column for this item.
-      * i.e. either part name of visibility
-      * used by Qt when displaying tree
-      * @param column is column index
-      * @return the QVariant (represents string)
+    /** Return the data item at a particular column
+      * @param column column index
+      * @return QVariant data value
       */
     QVariant data(int column) const;
 
-
-    /** Default function required by Qt to allow setting of part
-      * properties within treeview.
-      * @param column is the index of the property to set
-      * @param value is the value to apply
+    /** Set a property value
+      * @param column column index
+      * @param value value to set
       */
     void set(int column, const QVariant& value);
 
@@ -102,45 +90,65 @@ public:
       */
     ModelPart* parentItem();
 
-    /** Get row index of item, relative to parent item
+    /** Get row index of this item relative to parent
       * @return row index
       */
     int row() const;
 
-
-    /** Set colour
-      * (0-255 RGB values as ints)
+    /** Set colour using 0-255 RGB values
+      * @param R red value
+      * @param G green value
+      * @param B blue value
       */
-    void setColour(const unsigned char R, const unsigned char G, const unsigned char B);
+    void setColour(const unsigned char R,
+        const unsigned char G,
+        const unsigned char B);
 
+    /** Get red colour value
+      * @return red value, 0-255
+      */
     unsigned char getColourR();
+
+    /** Get green colour value
+      * @return green value, 0-255
+      */
     unsigned char getColourG();
+
+    /** Get blue colour value
+      * @return blue value, 0-255
+      */
     unsigned char getColourB();
 
     /** Set visible flag
-      * @param isVisible sets visible/non-visible
+      * @param isVisible true if visible, false if hidden
       */
     void setVisible(bool isVisible);
 
     /** Get visible flag
-      * @return visible flag as boolean
+      * @return true if visible
       */
     bool visible();
 
     /** Load STL file
-      * @param fileName
+      * @param fileName STL file path
       */
     void loadSTL(QString fileName);
 
-    /** Return actor
-      * @return pointer to default actor for GUI rendering
+    /** Return GUI actor
+      * @return pointer to actor used in the normal Qt/VTK renderer
       */
     vtkSmartPointer<vtkActor> getActor();
 
-    /** Return new actor for use in VR
-      * @return pointer to new actor
+    /** Return a new actor for VR
+      *
+      * Important:
+      * This does NOT return the normal GUI actor.
+      * It creates a new mapper and a new actor for the VR renderer.
+      *
+      * @return pointer to new actor used in VR
       */
-      //vtkActor* getNewActor();
+
+    vtkSmartPointer<vtkActor> getNewActor();
 
     bool getClipEnabled() const { return m_clipEnabled; }
     bool getShrinkEnabled() const { return m_shrinkEnabled; }
@@ -155,11 +163,11 @@ public:
     void  setClipOrigin(int origin) { m_clipOrigin = origin; }
 
 private:
-    QList<ModelPart*>                           m_childItems;
-    QList<QVariant>                             m_itemData;
-    ModelPart* m_parentItem;
+    QList<ModelPart*>                       m_childItems;   /**< Child items */
+    QList<QVariant>                         m_itemData;     /**< Column data */
+    ModelPart* m_parentItem;   /**< Parent item */
 
-    bool                                        isVisible;
+    bool                                    isVisible;      /**< Visibility flag */
 
     vtkSmartPointer<vtkSTLReader>               file;
     vtkSmartPointer<vtkMapper>                  mapper;
@@ -180,6 +188,8 @@ private:
     int   m_clipOrigin;
 };
 
-
+    vtkSmartPointer<vtkSTLReader>           file;           /**< STL reader */
+    vtkSmartPointer<vtkPolyDataMapper>      mapper;         /**< GUI mapper */
+    vtkSmartPointer<vtkActor>               actor;          /**< GUI actor */
 
 #endif

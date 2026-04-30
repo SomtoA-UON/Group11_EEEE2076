@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QModelIndex>
+
 #include "ModelPart.h"
 #include "ModelPartList.h"
+#include "VRRenderThread.h"
 
 #include <QDoubleSpinBox>
 #include <vtkSmartPointer.h>
@@ -13,6 +16,7 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
+
     class MainWindow;
 }
 QT_END_NAMESPACE
@@ -20,12 +24,20 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+public:
+    explicit MainWindow(QWidget* parent = nullptr);
+    ~MainWindow();
+
 public slots:
-    void handleButton1();
     void handleButton2();
     void handleTreeClicked();
+
     void on_actionOpen_File_triggered();
     void on_actionItem_Options_triggered();
+
+    void startVR();
+    void stopVR();
 
 private slots:
     void onTreeContextMenu(const QPoint& pos);
@@ -57,6 +69,8 @@ private:
     vtkSmartPointer<vtkRenderer>               renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
 
+    VRRenderThread* vrThread = nullptr;
+
     /** The single scene light whose intensity and position are user-adjustable. */
     vtkSmartPointer<vtkLight> m_light;
 
@@ -74,5 +88,7 @@ private:
       * Called once from the constructor.
       */
     void setupLightingDock();
+    int addPartToVRThread(const QModelIndex& index);
 };
+
 #endif // MAINWINDOW_H

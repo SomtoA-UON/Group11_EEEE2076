@@ -18,6 +18,8 @@ qt_add_executable(Project
     OptionDialog.ui
     OptionDialog.h
     OptionDialog.cpp
+VRRenderThread.cpp
+VRRenderThread.h
 )
 
 target_link_libraries(Project
@@ -25,6 +27,11 @@ target_link_libraries(Project
         Qt::Core
         Qt::Widgets
         ${VTK_LIBRARIES}
+)
+
+vtk_module_autoinit(
+    TARGETS Project
+    MODULES ${VTK_LIBRARIES}
 )
 
 include(GNUInstallDirs)
@@ -60,6 +67,7 @@ set(PROJECT_SOURCES
 )
 
 add_custom_target( VRBindings )
-add_custom_command(TARGET VRBindings PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E
-    copy_directory ${CMAKE_SOURCE_DIR}/vrbindings ${CMAKE_BINARY_DIR}/)
+add_custom_command(TARGET Project POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/vrbindings
+    $<TARGET_FILE_DIR:Project>/vrbindings)
