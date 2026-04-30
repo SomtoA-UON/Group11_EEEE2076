@@ -24,6 +24,8 @@
 #include <vtkOpenVRRenderWindow.h>
 #include <vtkOpenVRRenderWindowInteractor.h>
 #include <vtkProperty.h>
+#include <vtkPlaneSource.h>
+#include <vtkPolyDataMapper.h>
 
 /**
  * Constructor.
@@ -235,6 +237,26 @@ void VRRenderThread::run()
             );
         }
     }
+
+    // --- Create a floor plane ---
+
+    vtkNew<vtkPlaneSource> floorSource;
+    floorSource->SetOrigin(-500.0, 0.0, -500.0);
+    floorSource->SetPoint1(500.0, 0.0, -500.0);
+    floorSource->SetPoint2(-500.0, 0.0, 500.0);
+    floorSource->Update();
+
+    vtkNew<vtkPolyDataMapper> floorMapper;
+    floorMapper->SetInputConnection(floorSource->GetOutputPort());
+
+    vtkNew<vtkActor> floorActor;
+    floorActor->SetMapper(floorMapper);
+    floorActor->GetProperty()->SetColor(0.3, 0.3, 0.3);
+
+    // optional: make it slightly transparent
+    floorActor->GetProperty()->SetOpacity(0.8);
+
+    renderer->AddActor(floorActor);
 
     renderer->ResetCamera();
     window->Render();
