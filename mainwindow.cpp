@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDockWidget>
+#include <QDoubleSpinBox>
 #include "optiondialog.h"
 #include <vtkSmartPointer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
@@ -15,6 +17,8 @@
 #include <QCheckBox>
 #include <QDialog>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QFormLayout>
 #include <QPushButton>
 #include <QSlider>
 #include <QLabel>
@@ -48,38 +52,149 @@ MainWindow::MainWindow(QWidget* parent)
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
 
-    /* --- FIXED LIGHTING --- */
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetLightTypeToHeadlight();   // Changed from SceneLight
-    light->SetPosition(5, 5, 15);
-    light->SetFocalPoint(0, 0, 0);
-    light->SetIntensity(1.0);           // Increased intensity
-    renderer->AddLight(light);
-    /* --- END LIGHTING --- */
+    /* ---- Scene light (stored as member so controls can modify it) ---- */
+    m_light = vtkSmartPointer<vtkLight>::New();
+    m_light->SetLightTypeToSceneLight();
+    m_light->SetPosition(5.0, 5.0, 15.0);
+    m_light->SetFocalPoint(0.0, 0.0, 0.0);
+    m_light->SetIntensity(1.0);
+    renderer->AddLight(m_light);
+    /* ------------------------------------------------------------------ */
 
-    /* Create cylinder */
+    /* Create placeholder cylinder */
     vtkNew<vtkCylinderSource> cylinder;
     cylinder->SetResolution(8);
 
     vtkNew<vtkPolyDataMapper> cylinderMapper;
     cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
 
-    /* --- ADDED ACTOR (CRITICAL FIX) --- */
     vtkNew<vtkActor> cylinderActor;
     cylinderActor->SetMapper(cylinderMapper);
     renderer->AddActor(cylinderActor);
-    /* --- END ACTOR FIX --- */
 
     connect(ui->treeView, &QTreeView::clicked,
         this, &MainWindow::handleTreeClicked);
 
     ui->treeView->addAction(ui->actionItem_Options);
+
+    /* Build the lighting controls dock */
+    setupLightingDock();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+/* --------------------------------------------------------------------------
+ * Lighting dock
+ * -------------------------------------------------------------------------- */
+
+void MainWindow::setupLightingDock()
+{
+    QDockWidget* dock = new QDockWidget(tr("Lighting Controls"), this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+
+    QWidget* container = new QWidget(dock);
+    QVBoxLayout* vbox = new QVBoxLayout(container);
+
+    /* ---- Intensity slider ---- */
+    QLabel* intensityLabel = new QLabel(tr("Light Intensity:"), container);
+    QSlider* intensitySlider = new QSlider(Qt::Horizontal, container);
+    intensitySlider->setMinimum(0);
+    intensitySlider->setMaximum(100);
+    /* Initialise to match the light's current intensity (1.0 → 100) */
+    intensitySlider->setValue(static_cast<int>(m_light->GetIntensity() * 100.0));
+    intensitySlider->setToolTip(tr("Adjust scene light intensity (0 – 100 %)"));
+
+    connect(intensitySlider, &QSlider::valueChanged,
+        this, &MainWindow::onLightIntensityChanged);
+
+    vbox->addWidget(intensityLabel);
+    vbox->addWidget(intensitySlider);
+
+    /* ---- Position spinboxes ---- */
+    QLabel* posLabel = new QLabel(tr("Light Position:"), container);
+    vbox->addWidget(posLabel);
+
+    QFormLayout* form = new QFormLayout();
+
+    double pos[3];
+    m_light->GetPosition(pos);                  // read initial position
+
+    /* X */
+    m_lightXSpin = new QDoubleSpinBox(container);
+    m_lightXSpin->setRange(-200.0, 200.0);
+    m_lightXSpin->setSingleStep(1.0);
+    m_lightXSpin->setValue(pos[0]);
+    m_lightXSpin->setToolTip(tr("Light X position"));
+    form->addRow(tr("X:"), m_lightXSpin);
+
+    /* Y */
+    m_lightYSpin = new QDoubleSpinBox(container);
+    m_lightYSpin->setRange(-200.0, 200.0);
+    m_lightYSpin->setSingleStep(1.0);
+    m_lightYSpin->setValue(pos[1]);
+    m_lightYSpin->setToolTip(tr("Light Y position"));
+    form->addRow(tr("Y:"), m_lightYSpin);
+
+    /* Z */
+    m_lightZSpin = new QDoubleSpinBox(container);
+    m_lightZSpin->setRange(-200.0, 200.0);
+    m_lightZSpin->setSingleStep(1.0);
+    m_lightZSpin->setValue(pos[2]);
+    m_lightZSpin->setToolTip(tr("Light Z position"));
+    form->addRow(tr("Z:"), m_lightZSpin);
+
+    vbox->addLayout(form);
+
+    connect(m_lightXSpin, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        this, &MainWindow::onLightPositionChanged);
+    connect(m_lightYSpin, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        this, &MainWindow::onLightPositionChanged);
+    connect(m_lightZSpin, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+        this, &MainWindow::onLightPositionChanged);
+
+    vbox->addStretch();
+    container->setLayout(vbox);
+    dock->setWidget(container);
+
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+}
+
+/* --------------------------------------------------------------------------
+ * Lighting slots
+ * -------------------------------------------------------------------------- */
+
+ /** Converts the integer slider value (0-100) to a 0.0-1.0 intensity and
+   * applies it to the scene light, then re-renders.
+   */
+void MainWindow::onLightIntensityChanged(int value)
+{
+    double intensity = value / 100.0;
+    m_light->SetIntensity(intensity);
+    renderWindow->Render();
+    ui->widget->update();
+    emit statusUpdateMessage(
+        QString("Light intensity set to %1%").arg(value), 2000);
+}
+
+/** Reads the X, Y, Z spinboxes and updates the light position, then re-renders. */
+void MainWindow::onLightPositionChanged()
+{
+    double x = m_lightXSpin->value();
+    double y = m_lightYSpin->value();
+    double z = m_lightZSpin->value();
+    m_light->SetPosition(x, y, z);
+    renderWindow->Render();
+    ui->widget->update();
+    emit statusUpdateMessage(
+        QString("Light position: (%1, %2, %3)").arg(x).arg(y).arg(z), 2000);
+}
+
+/* --------------------------------------------------------------------------
+ * Existing slots (unchanged)
+ * -------------------------------------------------------------------------- */
 
 void MainWindow::handleButton1() {
     emit statusUpdateMessage(QString("Button 1 was clicked"), 0);
@@ -201,21 +316,11 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index) {
     }
 }
 
-/*
-void MainWindow::updateVRIfRunning(ModelPart* part) {
-    if (m_vrThread && m_vrThread->isRunning()) {
-        vtkActor* newVrActor = part->getNewActor();
-        m_vrThread->updateActor(part->getVrActor(), newVrActor);
-        part->setVrActor(newVrActor);
-    }
-}
-*/
-
 void MainWindow::onTreeContextMenu(const QPoint& pos) {
     qDebug() << "Context menu triggered at" << pos;
 
     QModelIndex index = ui->treeView->indexAt(pos);
-    if (!index.isValid()) return; // right-clicked empty space
+    if (!index.isValid()) return;
 
     QMenu menu(this);
     menu.addAction("Edit Filters", this, &MainWindow::onEditFilters);
@@ -235,7 +340,6 @@ void MainWindow::onEditFilters() {
 
     QVBoxLayout* layout = new QVBoxLayout(&dialog);
 
-    // Clip filter
     QCheckBox* clipCheck = new QCheckBox("Apply Clip Filter", &dialog);
     clipCheck->setChecked(part->getClipEnabled());
 
@@ -245,7 +349,6 @@ void MainWindow::onEditFilters() {
     clipSlider->setMaximum(100);
     clipSlider->setValue(part->getClipOrigin());
 
-    // Shrink filter
     QCheckBox* shrinkCheck = new QCheckBox("Apply Shrink Filter", &dialog);
     shrinkCheck->setChecked(part->getShrinkEnabled());
 
@@ -253,7 +356,7 @@ void MainWindow::onEditFilters() {
     QSlider* shrinkSlider = new QSlider(Qt::Horizontal, &dialog);
     shrinkSlider->setMinimum(1);
     shrinkSlider->setMaximum(99);
-    shrinkSlider->setValue(part->getShrinkFactor() * 100); // 0.01-0.99 stored as 1-99
+    shrinkSlider->setValue(part->getShrinkFactor() * 100);
 
     QPushButton* okButton = new QPushButton("OK", &dialog);
     connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
