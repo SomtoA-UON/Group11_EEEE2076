@@ -27,6 +27,19 @@
 #include <QSlider>
 #include <QLabel>
 #include <vtkProperty.h>
+//mainwindow.cpp
+/**@file
+* This file contains the MainWindow class and manages the UI, aswell as managing the loading of STL files to display 3D models on the UI
+* in addition to this it allows for the manipulation of colour, lighting and multiple filters, aswell as supporting VR rendering.
+*/
+
+/** main window constructor
+* This function initialises the UI, it connects the buttons for enabling and disabling VR, aswell as the button for changing colour of the 3D model.
+* It also connects status messages to the status bar, and enables functionality of the TreeView, by creating a context menu, relating to the user's right click.
+* Initially the Stop VR is disabled due to it not having any use before the VR is Started.
+* @param QWidget * parent, this is a pointer to a parent widget.
+* @return none, no return value as this is a constructor
+*/
 
     MainWindow::MainWindow(QWidget * parent)
     : QMainWindow(parent),
@@ -123,9 +136,11 @@
     setupLightingDock();
 }
 
-/**
- * Destructor.
- */
+    /** main window destructor
+    * Checks if the VR is running and safely stops it. Deletes the ui, and the partlist
+    *@param None, No parameters as this is a destructor.
+    *@return None. No return as this is a destructor
+    */
 MainWindow::~MainWindow()
 {
     /*
@@ -251,11 +266,12 @@ void MainWindow::onLightPositionChanged()
  * Existing slots (unchanged)
  * -------------------------------------------------------------------------- */
 
-/**
- * Start the VR renderer.
- *
- * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
- * adds those actors to the VR thread, then starts the thread.
+
+ /** Stop VR function
+ * Checks if the Vr is running, if it isn't a message is displayed, saying "VR is not running." If the vr is running then the VR is Stopped safely.
+ * Disables the Stop VR button when not necessary I.E when the VR is not started yet.
+ * @param None
+ * @return None, but returns early when the VR is not running.
  */
 void MainWindow::stopVR()
 {
@@ -271,6 +287,11 @@ void MainWindow::stopVR()
 
     emit statusUpdateMessage("Stopping VR...", 3000);
 }
+/** Start VR function
+*Checks if the VR is running, if it is running a message is displayed, saying "VR is already running. "
+* @param None, no parameters for start VR
+* @return None, returns early if the VR is already running.
+*/
 void MainWindow::startVR()
 {
     if (vrThread != nullptr && vrThread->isRunning())
@@ -333,11 +354,12 @@ void MainWindow::startVR()
     emit statusUpdateMessage("VR started.", 3000);
 }
 
-/**
- * Recursively adds visible model parts to the VR thread.
- *
+/** Function to add model parts to the VR thread
+ * This function recursively adds visible model parts to the VR thread.
  * Each ModelPart creates a separate VR actor using getNewActor().
  * The GUI actor is not reused.
+ * @param const QModelIndex& index
+ * @return 0, or actorCount.
  */
 int MainWindow::addPartToVRThread(const QModelIndex& index)
 {
@@ -374,7 +396,7 @@ int MainWindow::addPartToVRThread(const QModelIndex& index)
 }
 
 /**
- * Opens the item options dialog from pushButton_2.
+ * Creates a button for changing the colour of the 3D model
  */
 void MainWindow::handleButton2()
 {
@@ -413,8 +435,12 @@ void MainWindow::handleButton2()
     }
 }
 
-/**
+/** treeView Function
  * Handles tree item click.
+ * This function determines the which item within the treeView, and then emits a message displaying "The selected item is:....", if however the index value is invalid then no item is clicked, 
+ * and therefore it emits a message displaying "No item clicked"
+ * @param None
+ * @return None
  */
 void MainWindow::handleTreeClicked()
 {
@@ -438,8 +464,11 @@ void MainWindow::handleTreeClicked()
     return;
 }
 
-/**
- * Open an STL file and add it to the model tree.
+/** Open File button function
+ * Opens an STL file and add it to the model tree, when the open file button is clicked and a file within the individuals computer is selected if it is an STL
+ * If the user chooses to instead not select a file, then a message is displayed saying "Open file cancelled.", when the file is selected then it's file name will appear in the treeView
+ * @param N/A
+ * @return None, but the return is early in the case that no file was selected.
  */
 void MainWindow::on_actionOpen_File_triggered()
 {
@@ -657,6 +686,8 @@ void MainWindow::updateRender()
 
 /**
  * Recursively adds visible actors from the tree to the normal Qt/VTK renderer.
+ * @param QModelIndex & index, a reference to the tree item in the model, it is used to access the corresponding ModelPart
+ * @return None, but the return is early in the condition that the index value is not valid.
  */
 void MainWindow::updateRenderFromTree(const QModelIndex& index)
 {

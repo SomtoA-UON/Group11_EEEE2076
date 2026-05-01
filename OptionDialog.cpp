@@ -1,18 +1,26 @@
+
 #include "optiondialog.h"
 #include "ui_optiondialog.h"
-
+/**Constructor for OptionDialog
+* Set ups the UI widget for changing the colour of an STL file.
+*/
 OptionDialog::OptionDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OptionDialog)
 {
     ui->setupUi(this);
 }
-
+/**Destructor for optionDiolog
+* Deletes the ui.
+*@param None
+*@return None
+*/
 OptionDialog::~OptionDialog()
 {
     delete ui;
 }
-
+/**
+*/
 void OptionDialog::loadFromModelPart(ModelPart* part) {
     ui->lineEdit->setText(part->data(0).toString());
     ui->checkBox->setChecked(part->visible());

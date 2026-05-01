@@ -27,11 +27,11 @@
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataMapper.h>
 
-/**
- * Constructor.
- *
+/** Constructor for VR
  * This is called by MainWindow in the main GUI thread.
- * The VR renderer itself starts when start() is called.
+ * The VR renderer itself starts when start() is called, it then sets the rotation values to 0
+ * @param QObject* parent
+ * @return None
  */
 VRRenderThread::VRRenderThread(QObject* parent)
     : QThread(parent)
@@ -46,9 +46,10 @@ VRRenderThread::VRRenderThread(QObject* parent)
 }
 
 /**
- * Destructor.
- *
+ * Destructor for VR
  * Stops the VR loop safely if it is still running.
+ * @param None
+ * @return None
  */
 VRRenderThread::~VRRenderThread()
 {
@@ -72,9 +73,10 @@ VRRenderThread::~VRRenderThread()
 
 /**
  * Add actor before VR starts.
- *
  * Do not pass the normal GUI actor here.
  * MainWindow should pass a new VR actor created by ModelPart::getNewActor().
+ * @param
+ * @return
  */
 void VRRenderThread::addActorOffline(vtkActor* actor)
 {
@@ -104,8 +106,10 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
     }
 }
 
-/**
+/** Send command function.
  * Send command to the VR thread.
+ * @param
+ * @return
  */
 void VRRenderThread::issueCommand(int cmd, double value)
 {
@@ -133,7 +137,11 @@ void VRRenderThread::issueCommand(int cmd, double value)
         break;
     }
 }
-
+/**Update actor function
+* Updates the actor, by removing the old actor, and replacing it with the new
+* @param vtkActor* oldActor and vtkActor*newActor
+* @return None.
+*/
 void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
     QMutexLocker lock(&mutex);
     renderer->RemoveActor(oldActor);
