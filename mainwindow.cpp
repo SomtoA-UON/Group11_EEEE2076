@@ -116,6 +116,8 @@
 
     /* Build the lighting controls dock */
     setupLightingDock();
+
+    setupAnimationDock();
 }
 
 /**
@@ -553,6 +555,99 @@ void MainWindow::on_actionOpen_File_triggered()
 /**
  * Opens the item options dialog from the menu/action.
  */
+
+void MainWindow::setupAnimationDock()
+{
+    QDockWidget* dock = new QDockWidget(tr("VR Animation"), this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+
+    QWidget* container = new QWidget(dock);
+    QVBoxLayout* vbox = new QVBoxLayout(container);
+
+    /* --- Rotation sliders --- */
+    QLabel* labelX = new QLabel("Rotate X speed:", container);
+    QSlider* sliderX = new QSlider(Qt::Horizontal, container);
+    sliderX->setRange(-10, 10);
+    sliderX->setValue(0);
+    sliderX->setToolTip("Negative = reverse");
+
+    QLabel* labelY = new QLabel("Rotate Y speed:", container);
+    QSlider* sliderY = new QSlider(Qt::Horizontal, container);
+    sliderY->setRange(-10, 10);
+    sliderY->setValue(0);
+
+    QLabel* labelZ = new QLabel("Rotate Z speed:", container);
+    QSlider* sliderZ = new QSlider(Qt::Horizontal, container);
+    sliderZ->setRange(-10, 10);
+    sliderZ->setValue(0);
+
+    connect(sliderX, &QSlider::valueChanged, this, &MainWindow::onRotateX);
+    connect(sliderY, &QSlider::valueChanged, this, &MainWindow::onRotateY);
+    connect(sliderZ, &QSlider::valueChanged, this, &MainWindow::onRotateZ);
+
+    /* --- Stop and Reset buttons --- */
+    QPushButton* stopBtn = new QPushButton("Stop Rotation", container);
+    QPushButton* resetBtn = new QPushButton("Reset View", container);
+
+    connect(stopBtn, &QPushButton::released, this, &MainWindow::onStopRotation);
+    connect(resetBtn, &QPushButton::released, this, &MainWindow::onResetView);
+
+    vbox->addWidget(labelX);
+    vbox->addWidget(sliderX);
+    vbox->addWidget(labelY);
+    vbox->addWidget(sliderY);
+    vbox->addWidget(labelZ);
+    vbox->addWidget(sliderZ);
+    vbox->addSpacing(10);
+    vbox->addWidget(stopBtn);
+    vbox->addWidget(resetBtn);
+    vbox->addStretch();
+
+    container->setLayout(vbox);
+    dock->setWidget(container);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+}
+
+void MainWindow::onRotateX(int value)
+{
+    if (vrThread && vrThread->isRunning())
+        vrThread->issueCommand(VRRenderThread::ROTATE_X, value * 0.5);
+}
+
+void MainWindow::onRotateY(int value)
+{
+    if (vrThread && vrThread->isRunning())
+        vrThread->issueCommand(VRRenderThread::ROTATE_Y, value * 0.5);
+}
+
+void MainWindow::onRotateZ(int value)
+{
+    if (vrThread && vrThread->isRunning())
+        vrThread->issueCommand(VRRenderThread::ROTATE_Z, value * 0.5);
+}
+
+void MainWindow::onStopRotation()
+{
+    if (vrThread && vrThread->isRunning())
+    {
+        vrThread->issueCommand(VRRenderThread::ROTATE_X, 0.0);
+        vrThread->issueCommand(VRRenderThread::ROTATE_Y, 0.0);
+        vrThread->issueCommand(VRRenderThread::ROTATE_Z, 0.0);
+        emit statusUpdateMessage("Rotation stopped.", 3000);
+    }
+}
+
+void MainWindow::onResetView()
+{
+    if (vrThread && vrThread->isRunning())
+    {
+        vrThread->issueCommand(VRRenderThread::ROTATE_X, 0.0);
+        vrThread->issueCommand(VRRenderThread::ROTATE_Y, 0.0);
+        vrThread->issueCommand(VRRenderThread::ROTATE_Z, 0.0);
+        vrThread->issueCommand(VRRenderThread::RESET_VIEW, 0.0);
+        emit statusUpdateMessage("View reset.", 3000);
+    }
+}
 void MainWindow::on_actionItem_Options_triggered()
 {
     QModelIndex index = ui->treeView->currentIndex();

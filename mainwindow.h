@@ -48,6 +48,12 @@ private slots:
     void onChangeColour();
     void onRemoveItem();
 
+    void onRotateX(int value);
+    void onRotateY(int value);
+    void onRotateZ(int value);
+    void onStopRotation();
+    void onResetView();
+
     /** Called when the light intensity slider value changes.
       * @param value Slider integer value (0-100), mapped to intensity 0.0-1.0.
       */
@@ -64,6 +70,7 @@ signals:
 private:
     Ui::MainWindow* ui;
     ModelPartList* partList;
+    void setupAnimationDock();
 
     vtkSmartPointer<vtkRenderer>               renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
