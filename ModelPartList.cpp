@@ -9,12 +9,13 @@
 
 #include "ModelPartList.h"
 #include "ModelPart.h"
+#include <QColor>
 
 ModelPartList::ModelPartList(const QString& data, QObject* parent) : QAbstractItemModel(parent) {
     /* Have option to specify number of visible properties for each item in tree - the root item
      * acts as the column headers
      */
-    rootItem = new ModelPart({ tr("Part"), tr("Visible?"), tr("R"), tr("G"), tr("B") });
+    rootItem = new ModelPart({ tr("Part Name"), tr("Visible"), tr("Colour"), tr("G"), tr("B") });
 }
 
 
@@ -37,18 +38,24 @@ QVariant ModelPartList::data(const QModelIndex& index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    /* Role represents what this data will be used for, we only need deal with the case
-     * when QT is asking for data to create and display the treeview. Return a new,
-     * empty QVariant if any other request comes through. */
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
-    /* Get a a pointer to the item referred to by the QModelIndex */
+    /* Get a pointer to the item referred to by the QModelIndex */
     ModelPart* item = static_cast<ModelPart*>(index.internalPointer());
 
-    /* Each item in the tree has a number of columns ("Part" and "Visible" in this
-     * initial example) return the column requested by the QModelIndex */
-    return item->data(index.column());
+    /* Return text data for display in each column */
+    if (role == Qt::DisplayRole) {
+        return item->data(index.column());
+    }
+
+    /* Return a colour swatch in the R column (column 2) using the part's RGB values.
+     * Qt uses DecorationRole to render a coloured icon next to the text. */
+    if (role == Qt::DecorationRole && index.column() == 2) {
+        int r = item->data(2).toInt();
+        int g = item->data(3).toInt();
+        int b = item->data(4).toInt();
+        return QColor(r, g, b);
+    }
+
+    return QVariant();
 }
 
 

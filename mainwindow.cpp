@@ -4,6 +4,7 @@
 #include "OptionDialog.h"
 
 #include <QFileDialog>
+#include <QColorDialog>
 #include <QDockWidget>
 #include <QDoubleSpinBox>
 #include "optiondialog.h"
@@ -28,7 +29,7 @@
 #include <QLabel>
 #include <vtkProperty.h>
 
-    MainWindow::MainWindow(QWidget * parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
     partList(nullptr),
@@ -251,12 +252,12 @@ void MainWindow::onLightPositionChanged()
  * Existing slots (unchanged)
  * -------------------------------------------------------------------------- */
 
-/**
- * Start the VR renderer.
- *
- * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
- * adds those actors to the VR thread, then starts the thread.
- */
+ /**
+  * Start the VR renderer.
+  *
+  * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
+  * adds those actors to the VR thread, then starts the thread.
+  */
 void MainWindow::stopVR()
 {
     if (vrThread == nullptr || !vrThread->isRunning())
@@ -284,7 +285,7 @@ void MainWindow::startVR()
         emit statusUpdateMessage("Load an STL model before starting VR.", 3000);
         return;
     }
-    
+
 
     vrThread = new VRRenderThread(this);
 
@@ -378,39 +379,7 @@ int MainWindow::addPartToVRThread(const QModelIndex& index)
  */
 void MainWindow::handleButton2()
 {
-    QModelIndex index = ui->treeView->currentIndex();
-
-    if (!index.isValid())
-    {
-        emit statusUpdateMessage("No item selected.", 3000);
-        return;
-    }
-
-    ModelPart* selectedPart =
-        static_cast<ModelPart*>(index.internalPointer());
-
-    if (selectedPart == nullptr)
-    {
-        emit statusUpdateMessage("Invalid item selected.", 3000);
-        return;
-    }
-
-    OptionDialog dialog(this);
-    dialog.loadFromModelPart(selectedPart);
-
-    if (dialog.exec() == QDialog::Accepted)
-    {
-        dialog.saveToModelPart(selectedPart);
-        updateRender();
-
-        emit statusUpdateMessage("Item updated: " +
-            selectedPart->data(0).toString(),
-            3000);
-    }
-    else
-    {
-        emit statusUpdateMessage("Edit cancelled.", 3000);
-    }
+    onChangeColour();
 }
 
 /**
@@ -611,7 +580,39 @@ void MainWindow::onEditFilters() {
 }
 
 void MainWindow::onChangeColour() {
-    // TODO
+    QModelIndex index = ui->treeView->currentIndex();
+    if (!index.isValid()) {
+        emit statusUpdateMessage("No item selected.", 3000);
+        return;
+    }
+
+    ModelPart* part = static_cast<ModelPart*>(index.internalPointer());
+    if (!part) return;
+
+    /* Open colour picker pre-filled with the part's current colour */
+    QColor initial(part->getColourR(), part->getColourG(), part->getColourB());
+    QColor chosen = QColorDialog::getColor(initial, this, "Choose Part Colour");
+
+    if (!chosen.isValid())
+        return;   /* User cancelled */
+
+    /* Apply the chosen colour to the model part and its VTK actor */
+    part->setColour(
+        static_cast<unsigned char>(chosen.red()),
+        static_cast<unsigned char>(chosen.green()),
+        static_cast<unsigned char>(chosen.blue())
+    );
+
+    /* Refresh the tree view so the colour swatch updates */
+    partList->refreshModel();
+
+    /* Re-render the VTK viewport */
+    updateRender();
+
+    emit statusUpdateMessage(
+        QString("Colour changed to R:%1 G:%2 B:%3")
+        .arg(chosen.red()).arg(chosen.green()).arg(chosen.blue()),
+        3000);
 }
 
 void MainWindow::onRemoveItem() {
@@ -675,7 +676,6 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index)
         if (actor != nullptr)
         {
             renderer->AddActor(actor);
-            emit statusUpdateMessage("Invalid item selected.", 3000);
         }
     }
 
