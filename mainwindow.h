@@ -34,7 +34,10 @@ public slots:
     void handleTreeClicked();
 
     void on_actionOpen_File_triggered();
+    void on_actionLoad_Folder_triggered();
     void on_actionItem_Options_triggered();
+
+    void loadFolderRecursive(const QString& folderPath, ModelPart* parentPart);
 
     void startVR();
     void stopVR();

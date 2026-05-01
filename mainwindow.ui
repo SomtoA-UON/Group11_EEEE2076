@@ -59,6 +59,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="loadFolder">
+        <property name="text">
+         <string>Load Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
@@ -95,7 +102,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen_File"/>
+    <addaction name="loadFolderButton"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -110,9 +117,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionOpen_File"/>
+   <addaction name="loadFolderButton"/>
   </widget>
-  <action name="actionOpen_File">
+  <action name="loadFolderButton">
    <property name="enabled">
     <bool>true</bool>
    </property>

@@ -71,3 +71,8 @@ add_custom_command(TARGET Project POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/vrbindings
     $<TARGET_FILE_DIR:Project>/vrbindings)
+
+add_custom_command(TARGET Project POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/skybox
+    $<TARGET_FILE_DIR:Project>/skybox)

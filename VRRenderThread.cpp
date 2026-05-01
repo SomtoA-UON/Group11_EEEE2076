@@ -9,6 +9,9 @@
 
   /* Qt headers */
 #include <QMutexLocker>
+#include <QFile>
+#include <QDebug>
+#include <QCoreApplication>
 
 /* Standard headers */
 #include <array>
@@ -160,6 +163,54 @@ void VRRenderThread::run()
      */
     renderer = vtkSmartPointer<vtkOpenVRRenderer>::New();
     renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
+
+    // --- Skybox ---
+// Build path to skybox folder next to the executable
+QString appDir = QCoreApplication::applicationDirPath();
+QString skyboxDir = appDir + "/skybox/";
+
+// The 6 faces in VTK cubemap order
+QStringList faceFiles = {
+    skyboxDir + "right.jpg",
+    skyboxDir + "left.jpg",
+    skyboxDir + "top.jpg",
+    skyboxDir + "bottom.jpg",
+    skyboxDir + "front.jpg",
+    skyboxDir + "back.jpg"
+};
+
+// Check all 6 files exist before attempting to load
+bool skyboxValid = true;
+for (const QString& f : faceFiles) {
+    if (!QFile::exists(f)) {
+        qDebug() << "Skybox image missing:" << f;
+        skyboxValid = false;
+        break;
+    }
+}
+
+if (skyboxValid) {
+    vtkNew<vtkTexture> skyboxTexture;
+    skyboxTexture->CubeMapOn();
+    skyboxTexture->InterpolateOn();
+    skyboxTexture->RepeatOff();
+    skyboxTexture->EdgeClampOn();
+
+    for (int i = 0; i < 6; i++) {
+        vtkNew<vtkJPEGReader> reader;
+        reader->SetFileName(faceFiles[i].toStdString().c_str());
+        reader->Update();
+        skyboxTexture->SetInputConnection(i, reader->GetOutputPort());
+    }
+
+    vtkNew<vtkSkybox> skybox;
+    skybox->SetTexture(skyboxTexture);
+    renderer->AddActor(skybox);
+
+    qDebug() << "Skybox loaded successfully.";
+} else {
+    qDebug() << "Skybox skipped - falling back to solid background colour.";
+}
 
     /*
      * Add all offline actors to the VR renderer.

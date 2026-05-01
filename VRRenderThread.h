@@ -8,6 +8,10 @@
 #ifndef VR_RENDER_THREAD_H
 #define VR_RENDER_THREAD_H
 
+#include <vtkSkybox.h>
+#include <vtkTexture.h>
+#include <vtkJPEGReader.h>
+
   /* Qt headers */
 #include <QThread>
 #include <QMutex>

@@ -11,7 +11,9 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStatusBar>
+#include <QColorDialog>
 #include <QTreeView>
+#include <QDirIterator>
 
 #include <vtkSmartPointer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
@@ -38,6 +40,9 @@
     connect(ui->startVRButton, &QPushButton::released, this, &MainWindow::startVR);
     connect(ui->pushButton_2, &QPushButton::released, this, &MainWindow::handleButton2);
 
+    connect(ui->loadFolder, &QPushButton::released,
+        this, &MainWindow::on_actionLoad_Folder_triggered);
+
     connect(this, &MainWindow::statusUpdateMessage,
         ui->statusbar, &QStatusBar::showMessage);
 
@@ -51,11 +56,6 @@
         &MainWindow::stopVR);
 
     ui->stopVRButton->setEnabled(false);
-
-    connect(ui->pushButton_2,
-        &QPushButton::released,
-        this,
-        &MainWindow::handleButton2);
 
     /*
      * Status bar message connection.
@@ -113,11 +113,6 @@
     renderer->SetBackground(0.75, 0.75, 0.75);
 
     emit statusUpdateMessage("Ready.", 3000);
-
-    connect(ui->treeView, &QTreeView::clicked,
-        this, &MainWindow::handleTreeClicked);
-
-    ui->treeView->addAction(ui->actionItem_Options);
 
     /* Build the lighting controls dock */
     setupLightingDock();
@@ -224,6 +219,56 @@ void MainWindow::setupLightingDock()
  /** Converts the integer slider value (0-100) to a 0.0-1.0 intensity and
    * applies it to the scene light, then re-renders.
    */
+
+void MainWindow::on_actionLoad_Folder_triggered()
+{
+    QString folderPath = QFileDialog::getExistingDirectory(
+        this,
+        tr("Select Root Folder"),
+        "C:\\",
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+    );
+
+    if (folderPath.isEmpty()) {
+        emit statusUpdateMessage("Load folder cancelled.", 3000);
+        return;
+    }
+
+    // Create a top-level tree item named after the root folder
+    QFileInfo rootInfo(folderPath);
+    ModelPart* rootPart = new ModelPart({ rootInfo.fileName(), "true", "255", "255", "255" });
+    partList->getRootItem()->appendChild(rootPart);
+
+    // Recursively load subfolders and STL files under it
+    loadFolderRecursive(folderPath, rootPart);
+
+    partList->refreshModel();
+    updateRender();
+
+    emit statusUpdateMessage("Loaded folder: " + rootInfo.fileName(), 3000);
+}
+
+void MainWindow::loadFolderRecursive(const QString& folderPath, ModelPart* parentPart)
+{
+    QDir dir(folderPath);
+
+    // First pass: recurse into subfolders, creating a tree node for each
+    QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+    for (const QFileInfo& subDir : subDirs) {
+        ModelPart* folderPart = new ModelPart({ subDir.fileName(), "true", "255", "255", "255" });
+        parentPart->appendChild(folderPart);
+        loadFolderRecursive(subDir.absoluteFilePath(), folderPart);
+    }
+
+    // Second pass: load all STL files in this folder
+    QFileInfoList stlFiles = dir.entryInfoList({ "*.stl", "*.STL" }, QDir::Files, QDir::Name);
+    for (const QFileInfo& stlFile : stlFiles) {
+        ModelPart* newPart = new ModelPart({ stlFile.fileName(), "true", "255", "255", "255" });
+        newPart->loadSTL(stlFile.absoluteFilePath());
+        parentPart->appendChild(newPart);
+    }
+}
+
 void MainWindow::onLightIntensityChanged(int value)
 {
     double intensity = value / 100.0;
@@ -611,7 +656,31 @@ void MainWindow::onEditFilters() {
 }
 
 void MainWindow::onChangeColour() {
-    // TODO
+    QModelIndex index = ui->treeView->currentIndex();
+    if (!index.isValid()) {
+        emit statusUpdateMessage("No item selected.", 3000);
+        return;
+    }
+
+    ModelPart* part = static_cast<ModelPart*>(index.internalPointer());
+    if (!part) return;
+
+    // Open colour picker, pre-filled with the part's current colour
+    QColor initial(part->getColourR(), part->getColourG(), part->getColourB());
+    QColor chosen = QColorDialog::getColor(initial, this, "Choose Part Colour");
+
+    if (!chosen.isValid()) return; // user cancelled
+
+    part->setColour(
+        static_cast<unsigned char>(chosen.red()),
+        static_cast<unsigned char>(chosen.green()),
+        static_cast<unsigned char>(chosen.blue())
+    );
+
+    updateRender();
+
+    emit statusUpdateMessage(
+        QString("Colour changed for: ") + part->data(0).toString(), 3000);
 }
 
 void MainWindow::onRemoveItem() {
