@@ -9,6 +9,9 @@
 
   /* Qt headers */
 #include <QMutexLocker>
+#include <QDebug>
+#include <QFile>
+#include <QCoreApplication>
 
 /* Standard headers */
 #include <array>
@@ -26,6 +29,9 @@
 #include <vtkProperty.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkSkybox.h>
+#include <vtkTexture.h>
+#include <vtkJPEGReader.h>
 
 /**
  * Constructor.
@@ -37,12 +43,12 @@ VRRenderThread::VRRenderThread(QObject* parent)
     : QThread(parent)
 {
     actors = vtkSmartPointer<vtkActorCollection>::New();
-
     endRender = false;
-
     rotateX = 0.0;
     rotateY = 0.0;
     rotateZ = 0.0;
+
+    resetView = false;
 }
 
 /**
@@ -53,16 +59,6 @@ VRRenderThread::VRRenderThread(QObject* parent)
 VRRenderThread::~VRRenderThread()
 {
     issueCommand(END_RENDER, 0.0);
-
-    if (interactor != nullptr)
-    {
-        interactor->TerminateApp();
-    }
-
-    if (window != nullptr)
-    {
-        window->Finalize();
-    }
 
     if (isRunning())
     {
@@ -83,29 +79,17 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
         return;
     }
 
-    /*
-     * Only allow actors to be added before the thread is running.
-     * This avoids editing VTK objects from the GUI thread while VR is active.
-     */
     if (!isRunning())
     {
         QMutexLocker locker(&mutex);
-
-        /*
-         * IMPORTANT:
-         * Do not rotate or move the actor here.
-         *
-         * Some students had an issue where only a white cube appeared in VR.
-         * The fix is to remove the RotateX/AddPosition code from this function
-         * and apply the positioning later in run(), after actors are added to
-         * the VR renderer.
-         */
         actors->AddItem(actor);
     }
 }
 
 /**
- * Send command to the VR thread.
+ * Send a command to the VR thread.
+ * @param cmd   Command enum value (END_RENDER, ROTATE_X, ROTATE_Y, ROTATE_Z)
+ * @param value Numeric value associated with the command
  */
 void VRRenderThread::issueCommand(int cmd, double value)
 {
@@ -129,15 +113,13 @@ void VRRenderThread::issueCommand(int cmd, double value)
         rotateZ = value;
         break;
 
+    case RESET_VIEW:
+        resetView = true;
+        break;
+
     default:
         break;
     }
-}
-
-void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
-    QMutexLocker lock(&mutex);
-    renderer->RemoveActor(oldActor);
-    renderer->AddActor(newActor);
 }
 
 /**
@@ -147,23 +129,15 @@ void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
  */
 void VRRenderThread::run()
 {
-    /*
-     * Create background colour.
-     */
-    vtkNew<vtkNamedColors> colors;
-
-    std::array<unsigned char, 4> backgroundColour{ {26, 51, 102, 255} };
-    colors->SetColor("BkgColor", backgroundColour.data());
-
-    /*
-     * Create OpenVR renderer.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 1. Create renderer                                                  */
+    /* ------------------------------------------------------------------ */
     renderer = vtkSmartPointer<vtkOpenVRRenderer>::New();
-    renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
+    renderer->SetBackground(0.1, 0.2, 0.4);   /* fallback dark blue */
 
-    /*
-     * Add all offline actors to the VR renderer.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 2. Add model actors                                                 */
+    /* ------------------------------------------------------------------ */
     {
         QMutexLocker locker(&mutex);
 
@@ -176,25 +150,23 @@ void VRRenderThread::run()
         }
     }
 
-    /*
-     * Create OpenVR render window.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 3. Create window and attach renderer                                */
+    /* ------------------------------------------------------------------ */
     window = vtkSmartPointer<vtkOpenVRRenderWindow>::New();
-
     window->Initialize();
     window->AddRenderer(renderer);
 
-    /*
-     * Create OpenVR camera.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 4. Camera                                                           */
+    /* ------------------------------------------------------------------ */
     camera = vtkSmartPointer<vtkOpenVRCamera>::New();
     renderer->SetActiveCamera(camera);
 
-    /*
-     * Add simple light to scene.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 5. Lighting                                                         */
+    /* ------------------------------------------------------------------ */
     vtkNew<vtkLight> light;
-
     light->SetLightTypeToSceneLight();
     light->SetPosition(5.0, 5.0, 15.0);
     light->SetPositional(true);
@@ -204,48 +176,62 @@ void VRRenderThread::run()
     light->SetAmbientColor(1.0, 1.0, 1.0);
     light->SetSpecularColor(1.0, 1.0, 1.0);
     light->SetIntensity(0.8);
-
     renderer->AddLight(light);
 
-    /*
-     * Create OpenVR interactor.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 6. Interactor                                                       */
+    /* ------------------------------------------------------------------ */
     interactor = vtkSmartPointer<vtkOpenVRRenderWindowInteractor>::New();
-
     interactor->SetRenderWindow(window);
     interactor->Initialize();
 
-    /*
-     * Reintroduce initial model positioning here instead of in addActorOffline().
-     *
-     * This is the fix your lecturer mentioned:
-     * - add actors first
-     * - then rotate/move them after they are inside the VR renderer
-     */
-    vtkActorCollection* actorListForInitialTransform = renderer->GetActors();
-
-    if (actorListForInitialTransform != nullptr)
+    /* ------------------------------------------------------------------ */
+    /* 7. Initial model positioning                                        */
+    /*    Done here AFTER actors are in the renderer, NOT in               */
+    /*    addActorOffline() - this avoids the white cube bug               */
+    /* ------------------------------------------------------------------ */
     {
-        vtkActor* a = nullptr;
+        vtkActorCollection* actorList = renderer->GetActors();
 
-        actorListForInitialTransform->InitTraversal();
-
-        while ((a = actorListForInitialTransform->GetNextActor()) != nullptr)
+        if (actorList != nullptr)
         {
-            double* ac = a->GetOrigin();
+            vtkActor* a = nullptr;
+            actorList->InitTraversal();
 
-            a->RotateX(-90.0);
-
-            a->AddPosition(
-                -ac[0] + 0.0,
-                -ac[1] - 100.0,
-                -ac[2] - 200.0
-            );
+            while ((a = actorList->GetNextActor()) != nullptr)
+            {
+                double* ac = a->GetOrigin();
+                a->RotateX(-90.0);
+                a->AddPosition(
+                    -ac[0] + 0.0,
+                    -ac[1] - 100.0,
+                    -ac[2] - 200.0
+                );
+            }
+        }
+        /* Save original transforms for reset */
+        {
+            vtkActorCollection* actorList = renderer->GetActors();
+            if (actorList != nullptr)
+            {
+                vtkActor* a = nullptr;
+                actorList->InitTraversal();
+                while ((a = actorList->GetNextActor()) != nullptr)
+                {
+                    ActorTransform t;
+                    a->GetPosition(t.position);
+                    a->GetOrientation(t.orientation);
+                    a->GetScale(t.scale);
+                    a->GetOrigin(t.origin);
+                    originalTransforms.append(t);
+                }
+            }
         }
     }
 
-    // --- Create a floor plane ---
-
+    /* ------------------------------------------------------------------ */
+    /* 8. Floor plane                                                      */
+    /* ------------------------------------------------------------------ */
     vtkNew<vtkPlaneSource> floorSource;
     floorSource->SetOrigin(-500.0, 0.0, -500.0);
     floorSource->SetPoint1(500.0, 0.0, -500.0);
@@ -258,19 +244,107 @@ void VRRenderThread::run()
     vtkNew<vtkActor> floorActor;
     floorActor->SetMapper(floorMapper);
     floorActor->GetProperty()->SetColor(0.3, 0.3, 0.3);
-
-    // optional: make it slightly transparent
     floorActor->GetProperty()->SetOpacity(0.8);
-
     renderer->AddActor(floorActor);
 
+    /* ------------------------------------------------------------------ */
+    /* 9. Skybox                                                           */
+    /*    Added LAST so it is never affected by the model transform loop   */
+    /* ------------------------------------------------------------------ */
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString skyboxDir = appDir + "/skybox/";
+
+    QStringList faceFiles = {
+        skyboxDir + "right.jpg",
+        skyboxDir + "left.jpg",
+        skyboxDir + "top.jpg",
+        skyboxDir + "bottom.jpg",
+        skyboxDir + "front.jpg",
+        skyboxDir + "back.jpg"
+    };
+
+    qDebug() << "Looking for skybox in:" << skyboxDir;
+
+    bool skyboxValid = true;
+    for (const QString& f : faceFiles)
+    {
+        if (!QFile::exists(f))
+        {
+            qDebug() << "Skybox image missing:" << f;
+            skyboxValid = false;
+            break;
+        }
+    }
+
+    if (skyboxValid)
+    {
+        vtkNew<vtkTexture> skyboxTexture;
+        skyboxTexture->CubeMapOn();
+        skyboxTexture->InterpolateOn();
+        skyboxTexture->RepeatOff();
+        skyboxTexture->EdgeClampOn();
+        skyboxTexture->MipmapOn();
+
+        for (int i = 0; i < 6; i++)
+        {
+            vtkNew<vtkJPEGReader> reader;
+            reader->SetFileName(faceFiles[i].toStdString().c_str());
+            reader->Update();
+            skyboxTexture->SetInputConnection(i, reader->GetOutputPort());
+        }
+
+        vtkNew<vtkSkybox> skybox;
+        skybox->SetTexture(skyboxTexture);
+        renderer->AddActor(skybox);
+
+        qDebug() << "Skybox loaded successfully.";
+    }
+    else
+    {
+        /* Fallback: gradient background so it still looks decent */
+        renderer->GradientBackgroundOn();
+        renderer->SetBackground(0.53, 0.81, 0.98);   /* sky blue top */
+        renderer->SetBackground2(0.36, 0.25, 0.20);  /* warm ground bottom */
+        qDebug() << "Skybox not found - using gradient background.";
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 10. First render                                                    */
+    /* ------------------------------------------------------------------ */
     renderer->ResetCamera();
     window->Render();
 
-    /*
-     * Start manual VR event loop.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 11. Main VR event loop                                              */
+    /* ------------------------------------------------------------------ */
     {
+
+        /* Handle reset view */
+        bool localResetView = false;
+        {
+            QMutexLocker locker(&mutex);
+            localResetView = resetView;
+            if (resetView) resetView = false;
+        }
+
+        if (localResetView)
+        {
+            vtkActorCollection* actorList = renderer->GetActors();
+            if (actorList != nullptr)
+            {
+                vtkActor* a = nullptr;
+                int i = 0;
+                actorList->InitTraversal();
+                while ((a = actorList->GetNextActor()) != nullptr && i < originalTransforms.size())
+                {
+                    a->SetPosition(originalTransforms[i].position);
+                    a->SetOrientation(originalTransforms[i].orientation);
+                    a->SetScale(originalTransforms[i].scale);
+                    a->SetOrigin(originalTransforms[i].origin);
+                    i++;
+                }
+            }
+        }
         QMutexLocker locker(&mutex);
         endRender = false;
     }
@@ -282,14 +356,10 @@ void VRRenderThread::run()
         double localRotateX = 0.0;
         double localRotateY = 0.0;
         double localRotateZ = 0.0;
-        bool localEndRender = false;
+        bool   localEndRender = false;
 
-        /*
-         * Copy command variables safely.
-         */
         {
             QMutexLocker locker(&mutex);
-
             localRotateX = rotateX;
             localRotateY = rotateY;
             localRotateZ = rotateZ;
@@ -301,24 +371,18 @@ void VRRenderThread::run()
             break;
         }
 
-        /*
-         * Process one VR event.
-         */
         interactor->DoOneEvent(window, renderer);
 
-        /*
-         * Apply animation every 20 ms.
-         */
         auto timeNow = std::chrono::steady_clock::now();
 
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - t_last).count() > 20)
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(
+            timeNow - t_last).count() > 20)
         {
             vtkActorCollection* actorList = renderer->GetActors();
 
             if (actorList != nullptr)
             {
                 vtkActor* actor = nullptr;
-
                 actorList->InitTraversal();
 
                 while ((actor = actorList->GetNextActor()) != nullptr)
@@ -330,14 +394,13 @@ void VRRenderThread::run()
             }
 
             window->Render();
-
             t_last = timeNow;
         }
     }
 
-    /*
-     * Clean shutdown.
-     */
+    /* ------------------------------------------------------------------ */
+    /* 12. Clean shutdown                                                  */
+    /* ------------------------------------------------------------------ */
     if (window != nullptr)
     {
         window->Finalize();

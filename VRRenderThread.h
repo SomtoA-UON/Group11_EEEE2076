@@ -8,10 +8,16 @@
 #ifndef VR_RENDER_THREAD_H
 #define VR_RENDER_THREAD_H
 
+#include <vtkSkybox.h>
+#include <vtkTexture.h>
+#include <vtkJPEGReader.h>
+
   /* Qt headers */
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
+
+#include <QList>
 
 /* Standard headers */
 #include <chrono>
@@ -45,7 +51,8 @@ public:
         END_RENDER,
         ROTATE_X,
         ROTATE_Y,
-        ROTATE_Z
+        ROTATE_Z,
+        RESET_VIEW   // <-- add this
     };
 
     /**
@@ -81,6 +88,16 @@ protected:
     void run() override;
 
 private:
+
+    /* Stores original actor transforms for reset */
+    struct ActorTransform {
+        double position[3];
+        double orientation[3];
+        double scale[3];
+        double origin[3];
+    };
+    QList<ActorTransform> originalTransforms;  /* add this */
+    bool resetView;                             /* add this */
     /* Standard VTK VR classes */
     vtkSmartPointer<vtkOpenVRRenderWindow>              window;
     vtkSmartPointer<vtkOpenVRRenderWindowInteractor>    interactor;
