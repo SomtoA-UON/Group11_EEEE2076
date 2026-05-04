@@ -19,7 +19,11 @@ OptionDialog::~OptionDialog()
 {
     delete ui;
 }
-/**
+/** function to load from the ModelPart 
+* gets the colour values of RGB for the ModelPart.
+* gets the value of visible, and it's name.
+* @param None
+* @return None
 */
 void OptionDialog::loadFromModelPart(ModelPart* part) {
     ui->lineEdit->setText(part->data(0).toString());

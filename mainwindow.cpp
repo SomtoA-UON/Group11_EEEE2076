@@ -138,8 +138,8 @@
 
     /** main window destructor
     * Checks if the VR is running and safely stops it. Deletes the ui, and the partlist
-    *@param None, No parameters as this is a destructor.
-    *@return None. No return as this is a destructor
+    * @param None, No parameters as this is a destructor.
+    * @return None. No return as this is a destructor
     */
 MainWindow::~MainWindow()
 {
@@ -156,9 +156,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/* --------------------------------------------------------------------------
- * Lighting dock
- * -------------------------------------------------------------------------- */
+/**Function to create lighting Dock
+* This function is designed to create a dock widget, which is labelled as lighting controls
+* the widget contains, a light intensity slider, and the direction of the light in xyz planes.
+* @param None
+* @return None
+*/
 
 void MainWindow::setupLightingDock()
 {
@@ -236,9 +239,13 @@ void MainWindow::setupLightingDock()
  * Lighting slots
  * -------------------------------------------------------------------------- */
 
- /** Converts the integer slider value (0-100) to a 0.0-1.0 intensity and
-   * applies it to the scene light, then re-renders.
-   */
+ /** FUnction to change the intensity of the light
+ * changes the light intensity when the user has selected a new intensity and confirmed it.
+ *Converts the integer slider value (0-100) to a 0.0-1.0 intensity and
+ * applies it to the scene light, then re-renders.
+ * @param Integer value of the user selected light intensity.
+ * @return None.
+ */
 void MainWindow::onLightIntensityChanged(int value)
 {
     double intensity = value / 100.0;
@@ -249,7 +256,11 @@ void MainWindow::onLightIntensityChanged(int value)
         QString("Light intensity set to %1%").arg(value), 2000);
 }
 
-/** Reads the X, Y, Z spinboxes and updates the light position, then re-renders. */
+/** Function to change the light position
+Reads the X, Y, Z spinboxes and updates the light position, then re-renders.
+* @param None.
+* @return None.
+*/
 void MainWindow::onLightPositionChanged()
 {
     double x = m_lightXSpin->value();
@@ -534,8 +545,11 @@ void MainWindow::on_actionOpen_File_triggered()
     emit statusUpdateMessage("File opened: " + fileInfo.fileName(), 3000);
 }
 
-/**
+/** Function for when the treeView options is triggered.
  * Opens the item options dialog from the menu/action.
+ * if the index of the treeView is invalid, then it displays "No item selected"
+ * @param None
+ * @return None, returns early if the index is invalid.
  */
 void MainWindow::on_actionItem_Options_triggered()
 {
@@ -574,7 +588,13 @@ void MainWindow::on_actionItem_Options_triggered()
         emit statusUpdateMessage("Edit cancelled.", 3000);
     }
 }
-
+/** Function to create a context menu when the tree is clicked.
+* when the tree is clicked 3 labels appear, displaying "Edit Filters", "Change colour" and "remove item."
+* if the index isn't valid, then the function ends.
+* when edit filters, change colour and remove items, the user is sent to the corresponding widget.
+* @param constant value of QPoint& pos, which stores the position in the tree that the user is on.
+* @return None.
+*/
 void MainWindow::onTreeContextMenu(const QPoint& pos) {
     qDebug() << "Context menu triggered at" << pos;
 
@@ -587,7 +607,12 @@ void MainWindow::onTreeContextMenu(const QPoint& pos) {
     menu.addAction("Remove Item", this, &MainWindow::onRemoveItem);
     menu.exec(ui->treeView->viewport()->mapToGlobal(pos));
 }
-
+/**Function To allow for the editing of the clip and shrink filters.
+* If the index is not valid, the function ends.
+* Creates a checkbox for clip filter, and shrink filter, allows the user to input the amount they would like to shrink by
+* @param None.
+* @return None.
+*/
 void MainWindow::onEditFilters() {
     QModelIndex index = ui->treeView->currentIndex();
     if (!index.isValid()) return;
@@ -642,7 +667,12 @@ void MainWindow::onEditFilters() {
 void MainWindow::onChangeColour() {
     // TODO
 }
-
+/**Function for removing items from tree.
+* determines the item selected, if there isnt an item selected a message is displayed.
+* Removes, the item, and then refreshes the UI, to display the removal.
+* @param None.
+* @return None, returns early if the index of the tree is invalid.
+*/
 void MainWindow::onRemoveItem() {
     QModelIndex index = ui->treeView->currentIndex();
     if (!index.isValid()) {
@@ -658,8 +688,12 @@ void MainWindow::onRemoveItem() {
 
     emit statusUpdateMessage(QString("Removed: ") + name, 0);
 }
-/**
+/** Updates the render of the UI.
+* Removes all of the visinle props, and then creates for loop to manually add all props back.
+* Resets the camera.
  * Rebuilds the normal Qt/VTK render view from the tree.
+ * @param None
+ * @return None, returns early if the renderer is null.
  */
 void MainWindow::updateRender()
 {
