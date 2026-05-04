@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-//main.cpp
-/**@file
+/**@file main.cpp
 * This file initialises the Qt app
 */
 /** main function

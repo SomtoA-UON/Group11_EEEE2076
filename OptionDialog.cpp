@@ -1,4 +1,7 @@
 
+/**@file OptionDialog.cpp 
+* This file contains the code relating to the widget for changing the colour of an STL file.
+*/
 #include "optiondialog.h"
 #include "ui_optiondialog.h"
 /**Constructor for OptionDialog
@@ -22,7 +25,7 @@ OptionDialog::~OptionDialog()
 /** function to load from the ModelPart 
 * gets the colour values of RGB for the ModelPart.
 * gets the value of visible, and it's name.
-* @param None
+* @param ModelPart*part, the part that needs to be coloured
 * @return None
 */
 void OptionDialog::loadFromModelPart(ModelPart* part) {
@@ -32,7 +35,11 @@ void OptionDialog::loadFromModelPart(ModelPart* part) {
     ui->spinBox_2->setValue(part->getColourG());
     ui->spinBox_3->setValue(part->getColourB());
 }
-
+/** Function for sacing the colour changes to the UI
+* makes the colour changes set by the user to be visible on the UI
+* @param ModelPart* part, the part which has been changed in colour.
+* @return None
+*/
 void OptionDialog::saveToModelPart(ModelPart* part) {
     part->set(0, ui->lineEdit->text());
     part->setVisible(ui->checkBox->isChecked());

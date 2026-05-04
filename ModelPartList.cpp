@@ -1,15 +1,14 @@
 /**     @file ModelPartList.h
-  *
-  *     EEEE2076 - Software Engineering & VR Project
-  *
-  *     Template for model part list that will be used to create the trewview.
-  *
-  *     P Evans 2022
-  */
+* this file is used for the model part list that is used to create the treeView.
+*/
 
 #include "ModelPartList.h"
 #include "ModelPart.h"
-
+/** Function to create the properties of each item within the tree.
+* Creating an item, and defining its visibility, rgb values, and its part.
+* @param None
+* @return None
+*/
 ModelPartList::ModelPartList(const QString& data, QObject* parent) : QAbstractItemModel(parent) {
     /* Have option to specify number of visible properties for each item in tree - the root item
      * acts as the column headers
@@ -18,12 +17,18 @@ ModelPartList::ModelPartList(const QString& data, QObject* parent) : QAbstractIt
 }
 
 
-
+/** Destructor
+* @param None
+* @return None
+*/
 ModelPartList::~ModelPartList() {
     delete rootItem;
 }
 
-
+/** The function to create the collumn account.
+* @param const QModelIndex& parent this is the index for the parent model
+* @return returns the rootItem collumn count.
+*/
 int ModelPartList::columnCount(const QModelIndex& parent) const {
     Q_UNUSED(parent);
 

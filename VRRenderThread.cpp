@@ -1,8 +1,5 @@
 /**     @file VRRenderThread.cpp
-  *
-  *     EEEE2076 - Software Engineering & VR Project
-  *
-  *     Template to add VR rendering to your application.
+* this file contains the code to render in VR.
   */
 
 #include "VRRenderThread.h"
@@ -75,8 +72,8 @@ VRRenderThread::~VRRenderThread()
  * Add actor before VR starts.
  * Do not pass the normal GUI actor here.
  * MainWindow should pass a new VR actor created by ModelPart::getNewActor().
- * @param
- * @return
+ * @param VtkActor* actor.
+ * @return None
  */
 void VRRenderThread::addActorOffline(vtkActor* actor)
 {
@@ -108,8 +105,8 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
 
 /** Send command function.
  * Send command to the VR thread.
- * @param
- * @return
+ * @param integer named cmd, and a double which is named value.
+ * @return None
  */
 void VRRenderThread::issueCommand(int cmd, double value)
 {
@@ -148,11 +145,11 @@ void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
     renderer->AddActor(newActor);
 }
 
-/**
- * Main VR render thread.
- *
- * This runs separately from the Qt GUI thread.
- */
+/** Main VR render thread.
+*This runs separately from the Qt GUI thread.
+* @param None
+* @return None
+*/
 void VRRenderThread::run()
 {
     /*

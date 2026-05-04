@@ -1,10 +1,5 @@
 /**     @file ModelPart.cpp
-  *
-  *     EEEE2076 - Software Engineering & VR Project
-  *
-  *     Template for model parts that will be added as treeview items
-  *
-  *     P Evans 2022
+* this file contains the model parts that will be added as treeview items
   */
 
 #include "ModelPart.h"
@@ -19,9 +14,11 @@
 #include <vtkProperty.h>
 #include <vtkPlane.h>
 
-   /**
-    * Constructor.
-    */
+   /**This function is the Constructor for the model parts to be added as treeView items.
+   * sets the shrink filter, and clip filters to disabled, sets the origin to 0,0,0
+   * @param const QList<QVariant>& data, and ModelPart* parent, these are a qlist for the model parts, and the parent of ModelPart
+   * @return None
+   */
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     : m_itemData(data), m_parentItem(parent) {
 
@@ -51,16 +48,19 @@ ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     setColour(255, 255, 255);
 }
 
-/**
- * Destructor.
+/** This function is the Destructor.
+* @param None
+* @return None
  */
 ModelPart::~ModelPart()
 {
     qDeleteAll(m_childItems);
 }
 
-/**
+/**Function adding child item
  * Add child item.
+ * @param ModelPart* item
+ * @return None.
  */
 void ModelPart::appendChild(ModelPart* item) {
     item->m_parentItem = this;

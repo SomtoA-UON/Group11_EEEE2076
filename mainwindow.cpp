@@ -27,8 +27,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <vtkProperty.h>
-//mainwindow.cpp
-/**@file
+/**@file mainwindow.cpp
 * This file contains the MainWindow class and manages the UI, aswell as managing the loading of STL files to display 3D models on the UI
 * in addition to this it allows for the manipulation of colour, lighting and multiple filters, aswell as supporting VR rendering.
 */
