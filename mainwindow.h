@@ -37,16 +37,16 @@ public slots:
     void handleButton2();
     void handleTreeClicked();
 
-    void on_actionOpen_File_triggered();
-    void on_actionLoad_Folder_triggered();
-    void on_actionItem_Options_triggered();
-
     void loadFolderRecursive(const QString& folderPath, ModelPart* parentPart);
 
     void startVR();
     void stopVR();
 
 private slots:
+    void on_actionOpen_File_triggered();
+    void on_actionLoad_Folder_triggered();
+    void on_actionItem_Options_triggered();
+
     void onTreeContextMenu(const QPoint& pos);
     void onEditFilters();
     void onChangeColour();

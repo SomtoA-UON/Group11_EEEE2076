@@ -15,7 +15,7 @@ ModelPartList::ModelPartList(const QString& data, QObject* parent) : QAbstractIt
     /* Have option to specify number of visible properties for each item in tree - the root item
      * acts as the column headers
      */
-    rootItem = new ModelPart({ tr("Part Name"), tr("Visible"), tr("Colour"), tr("G"), tr("B") });
+    rootItem = new ModelPart({ tr("Part Name"), tr("Visible"), tr("Colour") });
 }
 
 
@@ -47,8 +47,13 @@ QVariant ModelPartList::data(const QModelIndex& index, int role) const {
     /* Get a pointer to the item referred to by the QModelIndex */
     ModelPart* item = static_cast<ModelPart*>(index.internalPointer());
 
-    /* Return text data for display in each column */
+    /* Return text data for display in each column.
+     * Column 0 = Part Name, Column 1 = Visible (true/false), Column 2 = Colour swatch only.
+     * Columns 2+ in the underlying ModelPart data store raw R, G, B values which are only
+     * used internally (e.g. for DecorationRole); we do not display them as text. */
     if (role == Qt::DisplayRole) {
+        if (index.column() == 2)
+            return QVariant(); /* colour column shows swatch only, no text */
         return item->data(index.column());
     }
 

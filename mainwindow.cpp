@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->loadFolder, &QPushButton::released,
         this, &MainWindow::on_actionLoad_Folder_triggered);
 
+    connect(ui->loadFolderButton, &QAction::triggered,
+        this, &MainWindow::on_actionOpen_File_triggered);
+
     connect(this, &MainWindow::statusUpdateMessage,
         ui->statusbar, &QStatusBar::showMessage);
 
