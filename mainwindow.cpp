@@ -30,6 +30,18 @@
 #include <QSlider>
 #include <QLabel>
 #include <vtkProperty.h>
+/**@file mainwindow.cpp
+* This file contains the MainWindow class and manages the UI, aswell as managing the loading of STL files to display 3D models on the UI
+* in addition to this it allows for the manipulation of colour, lighting and multiple filters, aswell as supporting VR rendering.
+*/
+
+/** main window constructor
+* This function initialises the UI, it connects the buttons for enabling and disabling VR, aswell as the button for changing colour of the 3D model.
+* It also connects status messages to the status bar, and enables functionality of the TreeView, by creating a context menu, relating to the user's right click.
+* Initially the Stop VR is disabled due to it not having any use before the VR is Started.
+* @param QWidget * parent, this is a pointer to a parent widget.
+* @return none, no return value as this is a constructor
+*/
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -121,9 +133,11 @@ MainWindow::MainWindow(QWidget* parent)
     setupAnimationDock();
 }
 
-/**
- * Destructor.
- */
+    /** main window destructor
+    * Checks if the VR is running and safely stops it. Deletes the ui, and the partlist
+    * @param None, No parameters as this is a destructor.
+    * @return None. No return as this is a destructor
+    */
 MainWindow::~MainWindow()
 {
     /*
@@ -139,9 +153,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/* --------------------------------------------------------------------------
- * Lighting dock
- * -------------------------------------------------------------------------- */
+/**Function to create lighting Dock
+* This function is designed to create a dock widget, which is labelled as lighting controls
+* the widget contains, a light intensity slider, and the direction of the light in xyz planes.
+* @param None
+* @return None
+*/
 
 void MainWindow::setupLightingDock()
 {
@@ -272,6 +289,13 @@ void MainWindow::loadFolderRecursive(const QString& folderPath, ModelPart* paren
     }
 }
 
+ /** FUnction to change the intensity of the light
+ * changes the light intensity when the user has selected a new intensity and confirmed it.
+ *Converts the integer slider value (0-100) to a 0.0-1.0 intensity and
+ * applies it to the scene light, then re-renders.
+ * @param Integer value of the user selected light intensity.
+ * @return None.
+ */
 void MainWindow::onLightIntensityChanged(int value)
 {
     double intensity = value / 100.0;
@@ -282,7 +306,11 @@ void MainWindow::onLightIntensityChanged(int value)
         QString("Light intensity set to %1%").arg(value), 2000);
 }
 
-/** Reads the X, Y, Z spinboxes and updates the light position, then re-renders. */
+/** Function to change the light position
+Reads the X, Y, Z spinboxes and updates the light position, then re-renders.
+* @param None.
+* @return None.
+*/
 void MainWindow::onLightPositionChanged()
 {
     double x = m_lightXSpin->value();
@@ -299,12 +327,13 @@ void MainWindow::onLightPositionChanged()
  * Existing slots (unchanged)
  * -------------------------------------------------------------------------- */
 
- /**
-  * Start the VR renderer.
-  *
-  * This creates a VRRenderThread, asks each ModelPart for a new VR actor,
-  * adds those actors to the VR thread, then starts the thread.
-  */
+
+ /** Stop VR function
+ * Checks if the Vr is running, if it isn't a message is displayed, saying "VR is not running." If the vr is running then the VR is Stopped safely.
+ * Disables the Stop VR button when not necessary I.E when the VR is not started yet.
+ * @param None
+ * @return None, but returns early when the VR is not running.
+ */
 void MainWindow::stopVR()
 {
     if (vrThread == nullptr || !vrThread->isRunning())
@@ -319,6 +348,11 @@ void MainWindow::stopVR()
 
     emit statusUpdateMessage("Stopping VR...", 3000);
 }
+/** Start VR function
+*Checks if the VR is running, if it is running a message is displayed, saying "VR is already running. "
+* @param None, no parameters for start VR
+* @return None, returns early if the VR is already running.
+*/
 void MainWindow::startVR()
 {
     if (vrThread != nullptr && vrThread->isRunning())
@@ -381,11 +415,12 @@ void MainWindow::startVR()
     emit statusUpdateMessage("VR started.", 3000);
 }
 
-/**
- * Recursively adds visible model parts to the VR thread.
- *
+/** Function to add model parts to the VR thread
+ * This function recursively adds visible model parts to the VR thread.
  * Each ModelPart creates a separate VR actor using getNewActor().
  * The GUI actor is not reused.
+ * @param const QModelIndex& index
+ * @return 0, or actorCount.
  */
 int MainWindow::addPartToVRThread(const QModelIndex& index)
 {
@@ -422,15 +457,19 @@ int MainWindow::addPartToVRThread(const QModelIndex& index)
 }
 
 /**
- * Opens the item options dialog from pushButton_2.
+ * Creates a button for changing the colour of the 3D model
  */
 void MainWindow::handleButton2()
 {
     onChangeColour();
 }
 
-/**
+/** treeView Function
  * Handles tree item click.
+ * This function determines the which item within the treeView, and then emits a message displaying "The selected item is:....", if however the index value is invalid then no item is clicked, 
+ * and therefore it emits a message displaying "No item clicked"
+ * @param None
+ * @return None
  */
 void MainWindow::handleTreeClicked()
 {
@@ -454,8 +493,11 @@ void MainWindow::handleTreeClicked()
     return;
 }
 
-/**
- * Open an STL file and add it to the model tree.
+/** Open File button function
+ * Opens an STL file and add it to the model tree, when the open file button is clicked and a file within the individuals computer is selected if it is an STL
+ * If the user chooses to instead not select a file, then a message is displayed saying "Open file cancelled.", when the file is selected then it's file name will appear in the treeView
+ * @param N/A
+ * @return None, but the return is early in the case that no file was selected.
  */
 void MainWindow::on_actionOpen_File_triggered()
 {
@@ -521,8 +563,11 @@ void MainWindow::on_actionOpen_File_triggered()
     emit statusUpdateMessage("File opened: " + fileInfo.fileName(), 3000);
 }
 
-/**
+/** Function for when the treeView options is triggered.
  * Opens the item options dialog from the menu/action.
+ * if the index of the treeView is invalid, then it displays "No item selected"
+ * @param None
+ * @return None, returns early if the index is invalid.
  */
 
 void MainWindow::setupAnimationDock()
@@ -654,7 +699,13 @@ void MainWindow::on_actionItem_Options_triggered()
         emit statusUpdateMessage("Edit cancelled.", 3000);
     }
 }
-
+/** Function to create a context menu when the tree is clicked.
+* when the tree is clicked 3 labels appear, displaying "Edit Filters", "Change colour" and "remove item."
+* if the index isn't valid, then the function ends.
+* when edit filters, change colour and remove items, the user is sent to the corresponding widget.
+* @param constant value of QPoint& pos, which stores the position in the tree that the user is on.
+* @return None.
+*/
 void MainWindow::onTreeContextMenu(const QPoint& pos) {
     qDebug() << "Context menu triggered at" << pos;
 
@@ -667,7 +718,12 @@ void MainWindow::onTreeContextMenu(const QPoint& pos) {
     menu.addAction("Remove Item", this, &MainWindow::onRemoveItem);
     menu.exec(ui->treeView->viewport()->mapToGlobal(pos));
 }
-
+/**Function To allow for the editing of the clip and shrink filters.
+* If the index is not valid, the function ends.
+* Creates a checkbox for clip filter, and shrink filter, allows the user to input the amount they would like to shrink by
+* @param None.
+* @return None.
+*/
 void MainWindow::onEditFilters() {
     QModelIndex index = ui->treeView->currentIndex();
     if (!index.isValid()) return;
@@ -754,7 +810,12 @@ void MainWindow::onChangeColour() {
         .arg(chosen.red()).arg(chosen.green()).arg(chosen.blue()),
         3000);
 }
-
+/**Function for removing items from tree.
+* determines the item selected, if there isnt an item selected a message is displayed.
+* Removes, the item, and then refreshes the UI, to display the removal.
+* @param None.
+* @return None, returns early if the index of the tree is invalid.
+*/
 void MainWindow::onRemoveItem() {
     QModelIndex index = ui->treeView->currentIndex();
     if (!index.isValid()) {
@@ -770,8 +831,12 @@ void MainWindow::onRemoveItem() {
 
     emit statusUpdateMessage(QString("Removed: ") + name, 0);
 }
-/**
+/** Updates the render of the UI.
+* Removes all of the visinle props, and then creates for loop to manually add all props back.
+* Resets the camera.
  * Rebuilds the normal Qt/VTK render view from the tree.
+ * @param None
+ * @return None, returns early if the renderer is null.
  */
 void MainWindow::updateRender()
 {
@@ -798,6 +863,8 @@ void MainWindow::updateRender()
 
 /**
  * Recursively adds visible actors from the tree to the normal Qt/VTK renderer.
+ * @param QModelIndex & index, a reference to the tree item in the model, it is used to access the corresponding ModelPart
+ * @return None, but the return is early in the condition that the index value is not valid.
  */
 void MainWindow::updateRenderFromTree(const QModelIndex& index)
 {

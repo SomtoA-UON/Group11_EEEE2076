@@ -1,3 +1,7 @@
+/**@file mainwindow.h
+* this is the file which creates the UI for the 3D rendering 
+* 
+*/
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

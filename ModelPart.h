@@ -1,11 +1,6 @@
 /**     @file ModelPart.h
-  *
-  *     EEEE2076 - Software Engineering & VR Project
-  *
-  *     Template for model parts that will be added as treeview items
-  *
-  *     P Evans 2022
-  */
+*This file is used to model parts that will be added as treeview items
+*/
 
 #ifndef VIEWER_MODELPART_H
 #define VIEWER_MODELPART_H

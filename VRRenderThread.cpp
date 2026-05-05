@@ -1,8 +1,5 @@
 /**     @file VRRenderThread.cpp
-  *
-  *     EEEE2076 - Software Engineering & VR Project
-  *
-  *     Template to add VR rendering to your application.
+* this file contains the code to render in VR.
   */
 
 #include "VRRenderThread.h"
@@ -33,11 +30,11 @@
 #include <vtkTexture.h>
 #include <vtkJPEGReader.h>
 
-/**
- * Constructor.
- *
+/** Constructor for VR
  * This is called by MainWindow in the main GUI thread.
- * The VR renderer itself starts when start() is called.
+ * The VR renderer itself starts when start() is called, it then sets the rotation values to 0
+ * @param QObject* parent
+ * @return None
  */
 VRRenderThread::VRRenderThread(QObject* parent)
     : QThread(parent)
@@ -52,9 +49,10 @@ VRRenderThread::VRRenderThread(QObject* parent)
 }
 
 /**
- * Destructor.
- *
+ * Destructor for VR
  * Stops the VR loop safely if it is still running.
+ * @param None
+ * @return None
  */
 VRRenderThread::~VRRenderThread()
 {
@@ -68,9 +66,10 @@ VRRenderThread::~VRRenderThread()
 
 /**
  * Add actor before VR starts.
- *
  * Do not pass the normal GUI actor here.
  * MainWindow should pass a new VR actor created by ModelPart::getNewActor().
+ * @param VtkActor* actor.
+ * @return None
  */
 void VRRenderThread::addActorOffline(vtkActor* actor)
 {
@@ -86,10 +85,11 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
     }
 }
 
-/**
- * Send a command to the VR thread.
- * @param cmd   Command enum value (END_RENDER, ROTATE_X, ROTATE_Y, ROTATE_Z)
- * @param value Numeric value associated with the command
+
+/** Send command function.
+ * Send command to the VR thread.
+ * @param integer named cmd, and a double which is named value.
+ * @return None
  */
 void VRRenderThread::issueCommand(int cmd, double value)
 {
@@ -122,11 +122,23 @@ void VRRenderThread::issueCommand(int cmd, double value)
     }
 }
 
-/**
- * Main VR render thread.
- *
- * This runs separately from the Qt GUI thread.
- */
+/**Update actor function
+* Updates the actor, by removing the old actor, and replacing it with the new
+* @param vtkActor* oldActor and vtkActor*newActor
+* @return None.
+*/
+void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
+    QMutexLocker lock(&mutex);
+    renderer->RemoveActor(oldActor);
+    renderer->AddActor(newActor);
+}
+
+/** Main VR render thread.
+*This runs separately from the Qt GUI thread.
+* @param None
+* @return None
+*/
+
 void VRRenderThread::run()
 {
     /* ------------------------------------------------------------------ */

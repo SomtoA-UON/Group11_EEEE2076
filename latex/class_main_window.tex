@@ -1,0 +1,156 @@
+\doxysection{Main\+Window Class Reference}
+\hypertarget{class_main_window}{}\label{class_main_window}\index{MainWindow@{MainWindow}}
+Inheritance diagram for Main\+Window:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_main_window}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{class_main_window_accf7f1ca023168f0c31d2f9580e8acab}{handle\+Button2}} ()
+\item 
+void \doxymbox{\hyperlink{class_main_window_a143bb60757a3e3f88e208eedb2af7539}{handle\+Tree\+Clicked}} ()
+\item 
+void \doxymbox{\hyperlink{class_main_window_a3a4866823ec0a9148c03ade962e65cf3}{on\+\_\+action\+Open\+\_\+\+File\+\_\+triggered}} ()
+\item 
+void \doxymbox{\hyperlink{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf}{on\+\_\+action\+Item\+\_\+\+Options\+\_\+triggered}} ()
+\item 
+void \doxymbox{\hyperlink{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}{start\+VR}} ()
+\item 
+void \doxymbox{\hyperlink{class_main_window_a3fbcc9909cf51a1f8671f495dd493a56}{stop\+VR}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_main_window_a86443ea744fda3e9bad328c2fd1c3d6b}\label{class_main_window_a86443ea744fda3e9bad328c2fd1c3d6b} 
+void {\bfseries status\+Update\+Message} (const QString \&message, int timeout)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_main_window_a996c5a2b6f77944776856f08ec30858d}{Main\+Window}} (QWidget \texorpdfstring{$\ast$}{*}parent=nullptr)
+\item 
+\doxymbox{\hyperlink{class_main_window_ae98d00a93bc118200eeef9f9bba1dba7}{\texorpdfstring{$\sim$}{\string~}\+Main\+Window}} ()
+\end{DoxyCompactItemize}
+
+
+\label{class_main_window_doc-constructors}
+\Hypertarget{class_main_window_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_main_window_a996c5a2b6f77944776856f08ec30858d}\index{MainWindow@{MainWindow}!MainWindow@{MainWindow}}
+\index{MainWindow@{MainWindow}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{MainWindow()}{MainWindow()}}
+{\footnotesize\ttfamily \label{class_main_window_a996c5a2b6f77944776856f08ec30858d} 
+Main\+Window::\+\+Main\+Window (\begin{DoxyParamCaption}\item[{QWidget \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+main window constructor This function initialises the UI, it connects the buttons for enabling and disabling VR, aswell as the button for changing colour of the 3D model. It also connects status messages to the status bar, and enables functionality of the Tree\+View, by creating a context menu, relating to the user\textquotesingle{}s right click. Initially the Stop VR is disabled due to it not having any use before the VR is Started. 
+\begin{DoxyParams}{Parameters}
+{\em QWidget} & \texorpdfstring{$\ast$}{*} parent, this is a pointer to a parent widget. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none, no return value as this is a constructor 
+\end{DoxyReturn}
+\Hypertarget{class_main_window_ae98d00a93bc118200eeef9f9bba1dba7}\index{MainWindow@{MainWindow}!````~MainWindow@{\texorpdfstring{$\sim$}{\string~}MainWindow}}
+\index{````~MainWindow@{\texorpdfstring{$\sim$}{\string~}MainWindow}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}MainWindow()}{\string~MainWindow()}}
+{\footnotesize\ttfamily \label{class_main_window_ae98d00a93bc118200eeef9f9bba1dba7} 
+Main\+Window::\+\texorpdfstring{$\sim$}{\string~}\+Main\+Window (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+main window destructor Checks if the VR is running and safely stops it. Deletes the ui, and the partlist 
+\begin{DoxyParams}{Parameters}
+{\em None,No} & parameters as this is a destructor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None. No return as this is a destructor 
+\end{DoxyReturn}
+
+
+\label{class_main_window_doc-func-members}
+\Hypertarget{class_main_window_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_main_window_accf7f1ca023168f0c31d2f9580e8acab}\index{MainWindow@{MainWindow}!handleButton2@{handleButton2}}
+\index{handleButton2@{handleButton2}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{handleButton2}{handleButton2}}
+{\footnotesize\ttfamily \label{class_main_window_accf7f1ca023168f0c31d2f9580e8acab} 
+void Main\+Window::\+handle\+Button2 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+Creates a button for changing the colour of the 3D model \Hypertarget{class_main_window_a143bb60757a3e3f88e208eedb2af7539}\index{MainWindow@{MainWindow}!handleTreeClicked@{handleTreeClicked}}
+\index{handleTreeClicked@{handleTreeClicked}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{handleTreeClicked}{handleTreeClicked}}
+{\footnotesize\ttfamily \label{class_main_window_a143bb60757a3e3f88e208eedb2af7539} 
+void Main\+Window::\+handle\+Tree\+Clicked (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+tree\+View Function Handles tree item click. This function determines the which item within the tree\+View, and then emits a message displaying "{}\+The selected item is:\+...."{}, if however the index value is invalid then no item is clicked, and therefore it emits a message displaying "{}\+No item clicked"{} 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf}\index{MainWindow@{MainWindow}!on\_actionItem\_Options\_triggered@{on\_actionItem\_Options\_triggered}}
+\index{on\_actionItem\_Options\_triggered@{on\_actionItem\_Options\_triggered}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{on\_actionItem\_Options\_triggered}{on\_actionItem\_Options\_triggered}}
+{\footnotesize\ttfamily \label{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf} 
+void Main\+Window::\+on\+\_\+action\+Item\+\_\+\+Options\+\_\+triggered (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+Function for when the tree\+View options is triggered. Opens the item options dialog from the menu/\+action. if the index of the tree\+View is invalid, then it displays "{}\+No item selected"{} 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None, returns early if the index is invalid. 
+\end{DoxyReturn}
+\Hypertarget{class_main_window_a3a4866823ec0a9148c03ade962e65cf3}\index{MainWindow@{MainWindow}!on\_actionOpen\_File\_triggered@{on\_actionOpen\_File\_triggered}}
+\index{on\_actionOpen\_File\_triggered@{on\_actionOpen\_File\_triggered}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{on\_actionOpen\_File\_triggered}{on\_actionOpen\_File\_triggered}}
+{\footnotesize\ttfamily \label{class_main_window_a3a4866823ec0a9148c03ade962e65cf3} 
+void Main\+Window::\+on\+\_\+action\+Open\+\_\+\+File\+\_\+triggered (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+Open File button function Opens an STL file and add it to the model tree, when the open file button is clicked and a file within the individuals computer is selected if it is an STL If the user chooses to instead not select a file, then a message is displayed saying "{}\+Open file cancelled."{}, when the file is selected then it\textquotesingle{}s file name will appear in the tree\+View 
+\begin{DoxyParams}{Parameters}
+{\em N/\+A} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None, but the return is early in the case that no file was selected. 
+\end{DoxyReturn}
+\Hypertarget{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}\index{MainWindow@{MainWindow}!startVR@{startVR}}
+\index{startVR@{startVR}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{startVR}{startVR}}
+{\footnotesize\ttfamily \label{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7} 
+void Main\+Window::\+start\+VR (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+Start VR function Checks if the VR is running, if it is running a message is displayed, saying "{}\+VR is already running. "{} 
+\begin{DoxyParams}{Parameters}
+{\em None,no} & parameters for start VR \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None, returns early if the VR is already running. 
+\end{DoxyReturn}
+\Hypertarget{class_main_window_a3fbcc9909cf51a1f8671f495dd493a56}\index{MainWindow@{MainWindow}!stopVR@{stopVR}}
+\index{stopVR@{stopVR}!MainWindow@{MainWindow}}
+\doxysubsubsection{\texorpdfstring{stopVR}{stopVR}}
+{\footnotesize\ttfamily \label{class_main_window_a3fbcc9909cf51a1f8671f495dd493a56} 
+void Main\+Window::\+stop\+VR (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+Stop VR function Checks if the Vr is running, if it isn\textquotesingle{}t a message is displayed, saying "{}\+VR is not running."{} If the vr is running then the VR is Stopped safely. Disables the Stop VR button when not necessary I.\+E when the VR is not started yet. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None, but returns early when the VR is not running. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{mainwindow_8h}{mainwindow.\+h}}\item 
+\doxymbox{\hyperlink{mainwindow_8cpp}{mainwindow.\+cpp}}\end{DoxyCompactItemize}

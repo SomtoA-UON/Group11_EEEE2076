@@ -1,0 +1,57 @@
+\doxysection{Model\+Part\+List.\+h}
+\hypertarget{_model_part_list_8h_source}{}\label{_model_part_list_8h_source}\doxymbox{\hyperlink{_model_part_list_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ VIEWER\_MODELPARTLIST\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ VIEWER\_MODELPARTLIST\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_model_part_8h}{ModelPart.h}}"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <QAbstractItemModel>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <QModelIndex>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <QVariant>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_model_part}{ModelPart}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_model_part_list_a039afc4b526b377bd346e8ea5b2d027d}{ModelPartList}}\ :\ \textcolor{keyword}{public}\ QAbstractItemModel\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ Q\_OBJECT\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00032\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_list_a039afc4b526b377bd346e8ea5b2d027d}{ModelPartList}}(\textcolor{keyword}{const}\ QString\&\ \doxymbox{\hyperlink{class_model_part_list_a60923d947a2eafb5dfabe1cf8461807e}{data}},\ QObject*\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}}\ =\ NULL);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00037\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_list_a9c45a4e506f201c312f65a4c94ab4650}{\string~ModelPartList}}();}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_list_a4a6ebf42f2f1c5c0242154d093295756}{columnCount}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00052\ \ \ \ \ QVariant\ \doxymbox{\hyperlink{class_model_part_list_a60923d947a2eafb5dfabe1cf8461807e}{data}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a5698ba9ca23f010369f12ff4a97976e2}{index}},\ \textcolor{keywordtype}{int}\ role)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00058\ \ \ \ \ Qt::ItemFlags\ \doxymbox{\hyperlink{class_model_part_list_ac28fbfeaf57aafc946127db8225c00b5}{flags}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a5698ba9ca23f010369f12ff4a97976e2}{index}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00063\ \ \ \ \ QVariant\ \doxymbox{\hyperlink{class_model_part_list_a6a54464c7907f0c18c2f5edd7cb4a51e}{headerData}}(\textcolor{keywordtype}{int}\ section,\ Qt::Orientation\ orientation,\ \textcolor{keywordtype}{int}\ role)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00074\ \ \ \ \ QModelIndex\ \doxymbox{\hyperlink{class_model_part_list_a5698ba9ca23f010369f12ff4a97976e2}{index}}(\textcolor{keywordtype}{int}\ row,\ \textcolor{keywordtype}{int}\ column,\ \textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00081\ \ \ \ \ QModelIndex\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a5698ba9ca23f010369f12ff4a97976e2}{index}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_list_a05d52c5cac09750d28ad041ec6a3d5ab}{rowCount}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00092\ \ \ \ \ \doxymbox{\hyperlink{class_model_part}{ModelPart}}*\ \doxymbox{\hyperlink{class_model_part_list_a1b6e2e108802afbc45e4bd054dccf982}{getRootItem}}();}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00096\ \ \ \ \ QModelIndex\ appendChild(QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a2aeb9586030b325193894ddfe99e629c}{parent}},\ \textcolor{keyword}{const}\ QList<QVariant>\&\ \doxymbox{\hyperlink{class_model_part_list_a60923d947a2eafb5dfabe1cf8461807e}{data}});}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ refreshModel();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_list_a331e367f122a0d84daa1e0298aa037e4}{removeItem}}(\textcolor{keyword}{const}\ QModelIndex\&\ \doxymbox{\hyperlink{class_model_part_list_a5698ba9ca23f010369f12ff4a97976e2}{index}});}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00106\ \ \ \ \ \doxymbox{\hyperlink{class_model_part}{ModelPart}}*\ rootItem;\ \ \ \ }
+\DoxyCodeLine{00107\ \};}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

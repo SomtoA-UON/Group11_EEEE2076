@@ -1,0 +1,167 @@
+\doxysection{VRRender\+Thread Class Reference}
+\hypertarget{class_v_r_render_thread}{}\label{class_v_r_render_thread}\index{VRRenderThread@{VRRenderThread}}
+
+
+{\ttfamily \+\#include $<$VRRender\+Thread.\+h$>$}
+
+Inheritance diagram for VRRender\+Thread:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_v_r_render_thread}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \doxymbox{\hyperlink{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669}{Command}} \{ {\bfseries END\+\_\+\+RENDER}
+, {\bfseries ROTATE\+\_\+X}
+, {\bfseries ROTATE\+\_\+Y}
+, {\bfseries ROTATE\+\_\+Z}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}{VRRender\+Thread}} (QObject \texorpdfstring{$\ast$}{*}parent=nullptr)
+\item 
+\doxymbox{\hyperlink{class_v_r_render_thread_a2fa57b06d1deb3cacb9bf2c142618b49}{\texorpdfstring{$\sim$}{\string~}\+VRRender\+Thread}} () override
+\item 
+void \doxymbox{\hyperlink{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13}{add\+Actor\+Offline}} (vtk\+Actor \texorpdfstring{$\ast$}{*}actor)
+\item 
+void \doxymbox{\hyperlink{class_v_r_render_thread_abbc905472309a2da473241a596e43813}{issue\+Command}} (int cmd, double value)
+\item 
+void \doxymbox{\hyperlink{class_v_r_render_thread_abd33352a45855f46ae667df2ac2a2ba6}{update\+Actor}} (vtk\+Actor \texorpdfstring{$\ast$}{*}old\+Actor, vtk\+Actor \texorpdfstring{$\ast$}{*}new\+Actor)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{class_v_r_render_thread_af5bbbaf8625fc42278476a43bf018661}{run}} () override
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Runs the Open\+VR renderer in a separate thread from the main Qt GUI.
+
+Actors should be added using \doxylink{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13}{add\+Actor\+Offline()} before the thread is started. 
+
+\label{class_v_r_render_thread_doc-enum-members}
+\Hypertarget{class_v_r_render_thread_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669}\index{VRRenderThread@{VRRenderThread}!Command@{Command}}
+\index{Command@{Command}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{Command}{Command}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669} 
+enum \doxymbox{\hyperlink{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669}{VRRender\+Thread::\+\+Command}}}
+
+Commands that can be sent from the GUI thread to the VR thread. 
+
+\label{class_v_r_render_thread_doc-constructors}
+\Hypertarget{class_v_r_render_thread_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}\index{VRRenderThread@{VRRenderThread}!VRRenderThread@{VRRenderThread}}
+\index{VRRenderThread@{VRRenderThread}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{VRRenderThread()}{VRRenderThread()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196} 
+VRRender\+Thread::\+\+VRRender\+Thread (\begin{DoxyParamCaption}\item[{QObject \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Constructor.
+
+Constructor for VR This is called by \doxylink{class_main_window}{Main\+Window} in the main GUI thread. The VR renderer itself starts when start() is called, it then sets the rotation values to 0 
+\begin{DoxyParams}{Parameters}
+{\em QObject\texorpdfstring{$\ast$}{*}} & parent \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_v_r_render_thread_a2fa57b06d1deb3cacb9bf2c142618b49}\index{VRRenderThread@{VRRenderThread}!````~VRRenderThread@{\texorpdfstring{$\sim$}{\string~}VRRenderThread}}
+\index{````~VRRenderThread@{\texorpdfstring{$\sim$}{\string~}VRRenderThread}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VRRenderThread()}{\string~VRRenderThread()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_a2fa57b06d1deb3cacb9bf2c142618b49} 
+VRRender\+Thread::\+\texorpdfstring{$\sim$}{\string~}\+VRRender\+Thread (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+Destructor.
+
+Destructor for VR Stops the VR loop safely if it is still running. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\label{class_v_r_render_thread_doc-func-members}
+\Hypertarget{class_v_r_render_thread_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13}\index{VRRenderThread@{VRRenderThread}!addActorOffline@{addActorOffline}}
+\index{addActorOffline@{addActorOffline}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{addActorOffline()}{addActorOffline()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13} 
+void VRRender\+Thread::\+add\+Actor\+Offline (\begin{DoxyParamCaption}\item[{vtk\+Actor \texorpdfstring{$\ast$}{*}}]{actor}{}\end{DoxyParamCaption})}
+
+Add an actor before the VR thread starts.
+
+Important:\+ This actor should be a separate VR actor, not the same actor used in the normal Qt/\+\+VTK renderer.
+
+Add actor before VR starts. Do not pass the normal GUI actor here. \doxylink{class_main_window}{Main\+Window} should pass a new VR actor created by \doxylink{class_model_part_a14ba4e6c0b21b77f6147c71826c33265}{Model\+Part::\+get\+New\+Actor()}. 
+\begin{DoxyParams}{Parameters}
+{\em Vtk\+Actor\texorpdfstring{$\ast$}{*}} & actor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_v_r_render_thread_abbc905472309a2da473241a596e43813}\index{VRRenderThread@{VRRenderThread}!issueCommand@{issueCommand}}
+\index{issueCommand@{issueCommand}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{issueCommand()}{issueCommand()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_abbc905472309a2da473241a596e43813} 
+void VRRender\+Thread::\+issue\+Command (\begin{DoxyParamCaption}\item[{int}]{cmd}{, }\item[{double}]{value}{}\end{DoxyParamCaption})}
+
+Send a command to the VR thread.
+
+Send command function. Send command to the VR thread. 
+\begin{DoxyParams}{Parameters}
+{\em integer} & named cmd, and a double which is named value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_v_r_render_thread_af5bbbaf8625fc42278476a43bf018661}\index{VRRenderThread@{VRRenderThread}!run@{run}}
+\index{run@{run}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_af5bbbaf8625fc42278476a43bf018661} 
+void VRRender\+Thread::\+run (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}}
+
+Main thread function. Runs when start() is called.
+
+Main VR render thread. This runs separately from the Qt GUI thread. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_v_r_render_thread_abd33352a45855f46ae667df2ac2a2ba6}\index{VRRenderThread@{VRRenderThread}!updateActor@{updateActor}}
+\index{updateActor@{updateActor}!VRRenderThread@{VRRenderThread}}
+\doxysubsubsection{\texorpdfstring{updateActor()}{updateActor()}}
+{\footnotesize\ttfamily \label{class_v_r_render_thread_abd33352a45855f46ae667df2ac2a2ba6} 
+void VRRender\+Thread::\+update\+Actor (\begin{DoxyParamCaption}\item[{vtk\+Actor \texorpdfstring{$\ast$}{*}}]{old\+Actor}{, }\item[{vtk\+Actor \texorpdfstring{$\ast$}{*}}]{new\+Actor}{}\end{DoxyParamCaption})}
+
+Update actor function Updates the actor, by removing the old actor, and replacing it with the new 
+\begin{DoxyParams}{Parameters}
+{\em vtk\+Actor\texorpdfstring{$\ast$}{*}} & old\+Actor and vtk\+Actor\texorpdfstring{$\ast$}{*}new\+Actor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{_v_r_render_thread_8h}{VRRender\+Thread.\+h}}\item 
+\doxymbox{\hyperlink{_v_r_render_thread_8cpp}{VRRender\+Thread.\+cpp}}\end{DoxyCompactItemize}
