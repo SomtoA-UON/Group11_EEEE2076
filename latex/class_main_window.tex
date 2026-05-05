@@ -13,9 +13,8 @@ void \doxymbox{\hyperlink{class_main_window_accf7f1ca023168f0c31d2f9580e8acab}{h
 \item 
 void \doxymbox{\hyperlink{class_main_window_a143bb60757a3e3f88e208eedb2af7539}{handle\+Tree\+Clicked}} ()
 \item 
-void \doxymbox{\hyperlink{class_main_window_a3a4866823ec0a9148c03ade962e65cf3}{on\+\_\+action\+Open\+\_\+\+File\+\_\+triggered}} ()
-\item 
-void \doxymbox{\hyperlink{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf}{on\+\_\+action\+Item\+\_\+\+Options\+\_\+triggered}} ()
+\Hypertarget{class_main_window_a4833e68720a6b7f26118796ea922a684}\label{class_main_window_a4833e68720a6b7f26118796ea922a684} 
+void {\bfseries load\+Folder\+Recursive} (const QString \&folder\+Path, \doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}parent\+Part)
 \item 
 void \doxymbox{\hyperlink{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}{start\+VR}} ()
 \item 
@@ -91,34 +90,6 @@ tree\+View Function Handles tree item click. This function determines the which 
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 None 
-\end{DoxyReturn}
-\Hypertarget{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf}\index{MainWindow@{MainWindow}!on\_actionItem\_Options\_triggered@{on\_actionItem\_Options\_triggered}}
-\index{on\_actionItem\_Options\_triggered@{on\_actionItem\_Options\_triggered}!MainWindow@{MainWindow}}
-\doxysubsubsection{\texorpdfstring{on\_actionItem\_Options\_triggered}{on\_actionItem\_Options\_triggered}}
-{\footnotesize\ttfamily \label{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf} 
-void Main\+Window::\+on\+\_\+action\+Item\+\_\+\+Options\+\_\+triggered (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
-
-Function for when the tree\+View options is triggered. Opens the item options dialog from the menu/\+action. if the index of the tree\+View is invalid, then it displays "{}\+No item selected"{} 
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None, returns early if the index is invalid. 
-\end{DoxyReturn}
-\Hypertarget{class_main_window_a3a4866823ec0a9148c03ade962e65cf3}\index{MainWindow@{MainWindow}!on\_actionOpen\_File\_triggered@{on\_actionOpen\_File\_triggered}}
-\index{on\_actionOpen\_File\_triggered@{on\_actionOpen\_File\_triggered}!MainWindow@{MainWindow}}
-\doxysubsubsection{\texorpdfstring{on\_actionOpen\_File\_triggered}{on\_actionOpen\_File\_triggered}}
-{\footnotesize\ttfamily \label{class_main_window_a3a4866823ec0a9148c03ade962e65cf3} 
-void Main\+Window::\+on\+\_\+action\+Open\+\_\+\+File\+\_\+triggered (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
-
-Open File button function Opens an STL file and add it to the model tree, when the open file button is clicked and a file within the individuals computer is selected if it is an STL If the user chooses to instead not select a file, then a message is displayed saying "{}\+Open file cancelled."{}, when the file is selected then it\textquotesingle{}s file name will appear in the tree\+View 
-\begin{DoxyParams}{Parameters}
-{\em N/\+A} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None, but the return is early in the case that no file was selected. 
 \end{DoxyReturn}
 \Hypertarget{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}\index{MainWindow@{MainWindow}!startVR@{startVR}}
 \index{startVR@{startVR}!MainWindow@{MainWindow}}

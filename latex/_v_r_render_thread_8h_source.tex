@@ -6,75 +6,92 @@
 \DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ VR\_RENDER\_THREAD\_H}}
 \DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ VR\_RENDER\_THREAD\_H}}
 \DoxyCodeLine{00010\ }
-\DoxyCodeLine{00011\ \ \ \textcolor{comment}{/*\ Qt\ headers\ */}}
-\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <QThread>}}
-\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QMutex>}}
-\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QWaitCondition>}}
-\DoxyCodeLine{00015\ }
-\DoxyCodeLine{00016\ \textcolor{comment}{/*\ Standard\ headers\ */}}
-\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <chrono>}}
-\DoxyCodeLine{00018\ }
-\DoxyCodeLine{00019\ \textcolor{comment}{/*\ VTK\ headers\ */}}
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <vtkSmartPointer.h>}}
-\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <vtkActor.h>}}
-\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <vtkActorCollection.h>}}
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderWindow.h>}}
-\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderWindowInteractor.h>}}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderer.h>}}
-\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <vtkOpenVRCamera.h>}}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00035\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}{VRRenderThread}}\ :\ \textcolor{keyword}{public}\ QThread}
-\DoxyCodeLine{00036\ \{}
-\DoxyCodeLine{00037\ \ \ \ \ Q\_OBJECT}
-\DoxyCodeLine{00038\ }
-\DoxyCodeLine{00039\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669}{Command}}}
-\DoxyCodeLine{00044\ \ \ \ \ \{}
-\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ END\_RENDER,}
-\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ ROTATE\_X,}
-\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ ROTATE\_Y,}
-\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ ROTATE\_Z}
-\DoxyCodeLine{00049\ \ \ \ \ \};}
-\DoxyCodeLine{00050\ }
-\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{explicit}\ \doxymbox{\hyperlink{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}{VRRenderThread}}(QObject*\ parent\ =\ \textcolor{keyword}{nullptr});}
-\DoxyCodeLine{00055\ }
-\DoxyCodeLine{00059\ \ \ \ \ \doxymbox{\hyperlink{class_v_r_render_thread_a2fa57b06d1deb3cacb9bf2c142618b49}{\string~VRRenderThread}}()\ \textcolor{keyword}{override};}
-\DoxyCodeLine{00060\ }
-\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13}{addActorOffline}}(vtkActor*\ actor);}
-\DoxyCodeLine{00069\ }
-\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_abbc905472309a2da473241a596e43813}{issueCommand}}(\textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{double}\ value);}
-\DoxyCodeLine{00074\ }
-\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_abd33352a45855f46ae667df2ac2a2ba6}{updateActor}}(vtkActor*\ oldActor,\ vtkActor*\ newActor);}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vtkSkybox.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <vtkTexture.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <vtkJPEGReader.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \textcolor{comment}{/*\ Qt\ headers\ */}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <QThread>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <QMutex>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <QWaitCondition>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ Standard\ headers\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ VTK\ headers\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <vtkSmartPointer.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <vtkActor.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <vtkActorCollection.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderWindow.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderWindowInteractor.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <vtkOpenVRRenderer.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <vtkOpenVRCamera.h>}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}{VRRenderThread}}\ :\ \textcolor{keyword}{public}\ QThread}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{class_v_r_render_thread_ae54e55debf52a3afee10238942ef5669}{Command}}}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ END\_RENDER,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ ROTATE\_X,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ ROTATE\_Y,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ ROTATE\_Z,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ RESET\_VIEW\ \ \ \textcolor{comment}{//\ <-\/-\/\ add\ this}}
+\DoxyCodeLine{00056\ \ \ \ \ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{explicit}\ \doxymbox{\hyperlink{class_v_r_render_thread_a35976e55f6655840aa217aa8a066f196}{VRRenderThread}}(QObject*\ parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00066\ \ \ \ \ \doxymbox{\hyperlink{class_v_r_render_thread_a2fa57b06d1deb3cacb9bf2c142618b49}{\string~VRRenderThread}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_a17bb943e3b852339398cfbb7cb12cf13}{addActorOffline}}(vtkActor*\ actor);}
 \DoxyCodeLine{00076\ }
-\DoxyCodeLine{00077\ \textcolor{keyword}{protected}:}
-\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_af5bbbaf8625fc42278476a43bf018661}{run}}()\ \textcolor{keyword}{override};}
-\DoxyCodeLine{00082\ }
-\DoxyCodeLine{00083\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{/*\ Standard\ VTK\ VR\ classes\ */}}
-\DoxyCodeLine{00085\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderWindow>\ \ \ \ \ \ \ \ \ \ \ \ \ \ window;}
-\DoxyCodeLine{00086\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderWindowInteractor>\ \ \ \ interactor;}
-\DoxyCodeLine{00087\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderer>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ renderer;}
-\DoxyCodeLine{00088\ \ \ \ \ vtkSmartPointer<vtkOpenVRCamera>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ camera;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_abbc905472309a2da473241a596e43813}{issueCommand}}(\textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{double}\ value);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_abd33352a45855f46ae667df2ac2a2ba6}{updateActor}}(vtkActor*\ oldActor,\ vtkActor*\ newActor);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_v_r_render_thread_af5bbbaf8625fc42278476a43bf018661}{run}}()\ \textcolor{keyword}{override};}
 \DoxyCodeLine{00089\ }
-\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{/*\ Used\ to\ synchronise\ commands\ from\ the\ GUI\ thread\ */}}
-\DoxyCodeLine{00091\ \ \ \ \ QMutex\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mutex;}
-\DoxyCodeLine{00092\ \ \ \ \ QWaitCondition\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ condition;}
-\DoxyCodeLine{00093\ }
-\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{/*\ Actors\ to\ add\ to\ the\ VR\ scene\ */}}
-\DoxyCodeLine{00095\ \ \ \ \ vtkSmartPointer<vtkActorCollection>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ actors;}
-\DoxyCodeLine{00096\ }
-\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{/*\ Timer\ for\ animation\ */}}
-\DoxyCodeLine{00098\ \ \ \ \ std::chrono::time\_point<std::chrono::steady\_clock>\ \ t\_last;}
-\DoxyCodeLine{00099\ }
-\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{/*\ Render\ loop\ control\ */}}
-\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endRender;}
-\DoxyCodeLine{00102\ }
-\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{/*\ Animation\ rotation\ values\ */}}
-\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateX;}
-\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateY;}
-\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateZ;}
-\DoxyCodeLine{00107\ \};}
-\DoxyCodeLine{00108\ }
-\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00090\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{/*\ Stores\ original\ actor\ transforms\ for\ reset\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{struct\ }ActorTransform\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ position[3];}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ orientation[3];}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ scale[3];}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ origin[3];}
+\DoxyCodeLine{00098\ \ \ \ \ \};}
+\DoxyCodeLine{00099\ \ \ \ \ QList<ActorTransform>\ originalTransforms;\ \ \textcolor{comment}{/*\ add\ this\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{bool}\ resetView;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ add\ this\ */}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*\ Standard\ VTK\ VR\ classes\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderWindow>\ \ \ \ \ \ \ \ \ \ \ \ \ \ window;}
+\DoxyCodeLine{00103\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderWindowInteractor>\ \ \ \ interactor;}
+\DoxyCodeLine{00104\ \ \ \ \ vtkSmartPointer<vtkOpenVRRenderer>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ renderer;}
+\DoxyCodeLine{00105\ \ \ \ \ vtkSmartPointer<vtkOpenVRCamera>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ camera;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{/*\ Used\ to\ synchronise\ commands\ from\ the\ GUI\ thread\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ QMutex\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mutex;}
+\DoxyCodeLine{00109\ \ \ \ \ QWaitCondition\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ condition;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{/*\ Actors\ to\ add\ to\ the\ VR\ scene\ */}}
+\DoxyCodeLine{00112\ \ \ \ \ vtkSmartPointer<vtkActorCollection>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ actors;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*\ Timer\ for\ animation\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ std::chrono::time\_point<std::chrono::steady\_clock>\ \ t\_last;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{comment}{/*\ Render\ loop\ control\ */}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endRender;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ Animation\ rotation\ values\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateX;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateY;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rotateZ;}
+\DoxyCodeLine{00124\ \};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

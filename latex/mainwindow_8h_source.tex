@@ -37,47 +37,57 @@
 \DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_accf7f1ca023168f0c31d2f9580e8acab}{handleButton2}}();}
 \DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a143bb60757a3e3f88e208eedb2af7539}{handleTreeClicked}}();}
 \DoxyCodeLine{00039\ }
-\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a3a4866823ec0a9148c03ade962e65cf3}{on\_actionOpen\_File\_triggered}}();}
-\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_ad3d17973d3111f1ba9805217b6ab58cf}{on\_actionItem\_Options\_triggered}}();}
-\DoxyCodeLine{00042\ }
-\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}{startVR}}();}
-\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a3fbcc9909cf51a1f8671f495dd493a56}{stopVR}}();}
-\DoxyCodeLine{00045\ }
-\DoxyCodeLine{00046\ \textcolor{keyword}{private}\ slots:}
-\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ onTreeContextMenu(\textcolor{keyword}{const}\ QPoint\&\ pos);}
-\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ onEditFilters();}
-\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{void}\ onChangeColour();}
-\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ onRemoveItem();}
-\DoxyCodeLine{00051\ }
-\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ onLightIntensityChanged(\textcolor{keywordtype}{int}\ value);}
-\DoxyCodeLine{00056\ }
-\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{void}\ onLightPositionChanged();}
-\DoxyCodeLine{00061\ }
-\DoxyCodeLine{00062\ signals:}
-\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ statusUpdateMessage(\textcolor{keyword}{const}\ QString\&\ message,\ \textcolor{keywordtype}{int}\ timeout);}
-\DoxyCodeLine{00064\ }
-\DoxyCodeLine{00065\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00066\ \ \ \ \ Ui::MainWindow*\ ui;}
-\DoxyCodeLine{00067\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_list}{ModelPartList}}*\ partList;}
-\DoxyCodeLine{00068\ }
-\DoxyCodeLine{00069\ \ \ \ \ vtkSmartPointer<vtkRenderer>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ renderer;}
-\DoxyCodeLine{00070\ \ \ \ \ vtkSmartPointer<vtkGenericOpenGLRenderWindow>\ renderWindow;}
-\DoxyCodeLine{00071\ }
-\DoxyCodeLine{00072\ \ \ \ \ \doxymbox{\hyperlink{class_v_r_render_thread}{VRRenderThread}}*\ vrThread\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ loadFolderRecursive(\textcolor{keyword}{const}\ QString\&\ folderPath,\ \doxymbox{\hyperlink{class_model_part}{ModelPart}}*\ parentPart);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a0c20dc8be5b7925c0e544a72fc17dfa7}{startVR}}();}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_main_window_a3fbcc9909cf51a1f8671f495dd493a56}{stopVR}}();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ on\_actionOpen\_File\_triggered();}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ on\_actionLoad\_Folder\_triggered();}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ on\_actionItem\_Options\_triggered();}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ onTreeContextMenu(\textcolor{keyword}{const}\ QPoint\&\ pos);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ onEditFilters();}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{void}\ onChangeColour();}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ onRemoveItem();}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ onRotateX(\textcolor{keywordtype}{int}\ value);}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ onRotateY(\textcolor{keywordtype}{int}\ value);}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ onRotateZ(\textcolor{keywordtype}{int}\ value);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{void}\ onStopRotation();}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ onResetView();}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ onLightIntensityChanged(\textcolor{keywordtype}{int}\ value);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ onLightPositionChanged();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ signals:}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ statusUpdateMessage(\textcolor{keyword}{const}\ QString\&\ message,\ \textcolor{keywordtype}{int}\ timeout);}
 \DoxyCodeLine{00073\ }
-\DoxyCodeLine{00075\ \ \ \ \ vtkSmartPointer<vtkLight>\ m\_light;}
-\DoxyCodeLine{00076\ }
-\DoxyCodeLine{00080\ \ \ \ \ QDoubleSpinBox*\ m\_lightXSpin\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00081\ \ \ \ \ QDoubleSpinBox*\ m\_lightYSpin\ =\ \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{00082\ \ \ \ \ QDoubleSpinBox*\ m\_lightZSpin\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00074\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00075\ \ \ \ \ Ui::MainWindow*\ ui;}
+\DoxyCodeLine{00076\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_list}{ModelPartList}}*\ partList;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ setupAnimationDock();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ vtkSmartPointer<vtkRenderer>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ renderer;}
+\DoxyCodeLine{00080\ \ \ \ \ vtkSmartPointer<vtkGenericOpenGLRenderWindow>\ renderWindow;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \doxymbox{\hyperlink{class_v_r_render_thread}{VRRenderThread}}*\ vrThread\ =\ \textcolor{keyword}{nullptr};}
 \DoxyCodeLine{00083\ }
-\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRender();}
-\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRenderFromTree(\textcolor{keyword}{const}\ QModelIndex\&\ index);}
+\DoxyCodeLine{00085\ \ \ \ \ vtkSmartPointer<vtkLight>\ m\_light;}
 \DoxyCodeLine{00086\ }
-\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ setupLightingDock();}
-\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ addPartToVRThread(\textcolor{keyword}{const}\ QModelIndex\&\ index);}
-\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00090\ \ \ \ \ QDoubleSpinBox*\ m\_lightXSpin\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00091\ \ \ \ \ QDoubleSpinBox*\ m\_lightYSpin\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00092\ \ \ \ \ QDoubleSpinBox*\ m\_lightZSpin\ =\ \textcolor{keyword}{nullptr};}
 \DoxyCodeLine{00093\ }
-\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MAINWINDOW\_H}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRender();}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ updateRenderFromTree(\textcolor{keyword}{const}\ QModelIndex\&\ index);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ setupLightingDock();}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{int}\ addPartToVRThread(\textcolor{keyword}{const}\ QModelIndex\&\ index);}
+\DoxyCodeLine{00102\ \};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MAINWINDOW\_H}}
 
 \end{DoxyCode}
