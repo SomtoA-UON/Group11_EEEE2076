@@ -624,25 +624,38 @@ void MainWindow::setupAnimationDock()
     dock->setWidget(container);
     addDockWidget(Qt::RightDockWidgetArea, dock);
 }
-
+/**Function to rotate X axis
+* @param int value, a value of integer is taken to rotate the x axis.
+* @return None
+*/
 void MainWindow::onRotateX(int value)
 {
     if (vrThread && vrThread->isRunning())
         vrThread->issueCommand(VRRenderThread::ROTATE_X, value * 0.5);
 }
-
+/**Function to rotate Y axis
+* @param int value, a value of integer is taken to rotate the y axis.
+* @return None
+*/
 void MainWindow::onRotateY(int value)
 {
     if (vrThread && vrThread->isRunning())
         vrThread->issueCommand(VRRenderThread::ROTATE_Y, value * 0.5);
 }
-
+/**Function to rotate Z axis
+* @param int value, a value of integer is taken to rotate the z axis.
+* @return None
+*/
 void MainWindow::onRotateZ(int value)
 {
     if (vrThread && vrThread->isRunning())
         vrThread->issueCommand(VRRenderThread::ROTATE_Z, value * 0.5);
 }
-
+/**Function to stop the rotation of the 3D model
+* stopes the rotation of the xyz, and outputs a message saying "Rotation stopped"
+* @param None
+* @return None
+*/
 void MainWindow::onStopRotation()
 {
     if (vrThread && vrThread->isRunning())
@@ -653,7 +666,11 @@ void MainWindow::onStopRotation()
         emit statusUpdateMessage("Rotation stopped.", 3000);
     }
 }
-
+/**Function to reset the view
+*stops rotations, and resets the view, and outputs a message saying "View reset"
+* @param None
+* @return None
+*/
 void MainWindow::onResetView()
 {
     if (vrThread && vrThread->isRunning())
@@ -665,6 +682,11 @@ void MainWindow::onResetView()
         emit statusUpdateMessage("View reset.", 3000);
     }
 }
+/**Function to control what happens when the tree is clicked
+* determines whether or not an item is clicked, if not outputs it, if so opens the options
+* @param None
+* @return None
+*/
 void MainWindow::on_actionItem_Options_triggered()
 {
     QModelIndex index = ui->treeView->currentIndex();

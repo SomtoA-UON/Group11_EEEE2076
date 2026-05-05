@@ -76,3 +76,16 @@ add_custom_command(TARGET Project POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/skybox
     $<TARGET_FILE_DIR:Project>/skybox)
+if(WIN32)
+	set(CPACK_GENERATOR "NSIS")
+else()
+	set(CPACK_GENERATOR "ZIP")
+endif()
+
+set(CPACK_PACKAGE_NAME "Group 11 VR Work")
+set(CPACK_PACKAGE_VENDOR "University of Nottingham")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "VR Visualization App")
+set(CPACK_PACKAGE_FILE_NAME "Group11VRWork-1.0.0")
+
+include(CPack)

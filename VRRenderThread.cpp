@@ -85,7 +85,6 @@ void VRRenderThread::addActorOffline(vtkActor* actor)
     }
 }
 
-
 /** Send command function.
  * Send command to the VR thread.
  * @param integer named cmd, and a double which is named value.
@@ -121,7 +120,6 @@ void VRRenderThread::issueCommand(int cmd, double value)
         break;
     }
 }
-
 /**Update actor function
 * Updates the actor, by removing the old actor, and replacing it with the new
 * @param vtkActor* oldActor and vtkActor*newActor
@@ -138,18 +136,25 @@ void VRRenderThread::updateActor(vtkActor* oldActor, vtkActor* newActor) {
 * @param None
 * @return None
 */
-
 void VRRenderThread::run()
 {
-    /* ------------------------------------------------------------------ */
-    /* 1. Create renderer                                                  */
-    /* ------------------------------------------------------------------ */
+    /*
+     * Create background colour.
+     */
+    vtkNew<vtkNamedColors> colors;
+
+    std::array<unsigned char, 4> backgroundColour{ {26, 51, 102, 255} };
+    colors->SetColor("BkgColor", backgroundColour.data());
+
+    /*
+     * Create OpenVR renderer.
+     */
     renderer = vtkSmartPointer<vtkOpenVRRenderer>::New();
     renderer->SetBackground(0.1, 0.2, 0.4);   /* fallback dark blue */
 
-    /* ------------------------------------------------------------------ */
-    /* 2. Add model actors                                                 */
-    /* ------------------------------------------------------------------ */
+    /*
+     * Add all offline actors to the VR renderer.
+     */
     {
         QMutexLocker locker(&mutex);
 
@@ -169,15 +174,15 @@ void VRRenderThread::run()
     window->Initialize();
     window->AddRenderer(renderer);
 
-    /* ------------------------------------------------------------------ */
-    /* 4. Camera                                                           */
-    /* ------------------------------------------------------------------ */
+    /*
+     * Create OpenVR camera.
+     */
     camera = vtkSmartPointer<vtkOpenVRCamera>::New();
     renderer->SetActiveCamera(camera);
 
-    /* ------------------------------------------------------------------ */
-    /* 5. Lighting                                                         */
-    /* ------------------------------------------------------------------ */
+    /*
+     * Add simple light to scene.
+     */
     vtkNew<vtkLight> light;
     light->SetLightTypeToSceneLight();
     light->SetPosition(5.0, 5.0, 15.0);
@@ -190,9 +195,9 @@ void VRRenderThread::run()
     light->SetIntensity(0.8);
     renderer->AddLight(light);
 
-    /* ------------------------------------------------------------------ */
-    /* 6. Interactor                                                       */
-    /* ------------------------------------------------------------------ */
+    /*
+     * Create OpenVR interactor.
+     */
     interactor = vtkSmartPointer<vtkOpenVRRenderWindowInteractor>::New();
     interactor->SetRenderWindow(window);
     interactor->Initialize();
