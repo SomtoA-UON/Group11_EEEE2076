@@ -1,0 +1,120 @@
+\doxysection{Model\+Part.\+h}
+\hypertarget{_model_part_8h_source}{}\label{_model_part_8h_source}\doxymbox{\hyperlink{_model_part_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifndef\ VIEWER\_MODELPART\_H}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ VIEWER\_MODELPART\_H}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QVariant>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vtkSmartPointer.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <vtkSTLReader.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <vtkPolyDataMapper.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <vtkActor.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <vtkPlane.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <vtkClipPolyData.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <vtkShrinkFilter.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <vtkGeometryFilter.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \textcolor{comment}{/*\ VTK\ headers\ -\/\ will\ be\ needed\ when\ VTK\ used\ in\ next\ worksheet,}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ commented\ out\ for\ now}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ Note\ that\ there\ are\ a\ few\ function\ definitions\ and\ variables}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ commented\ out\ below\ -\/\ this\ is\ because\ you\ haven't\ yet\ installed}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ the\ VTK\ library\ which\ is\ needed.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <vtkSmartPointer.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <vtkActor.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <vtkSTLReader.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <vtkColor.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <vtkPolyDataMapper.h>}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}}
+\DoxyCodeLine{00035\ \{}
+\DoxyCodeLine{00036\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}(\textcolor{keyword}{const}\ QList<QVariant>\&\ \doxymbox{\hyperlink{class_model_part_a178655da543bd0dae2d0ed1e2ea38a56}{data}},\ \doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}*\ parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00046\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_a0b3b00630e9866e3e8fd648d28b7f016}{\string~ModelPart}}();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_a52074db110367665c3e262919e172c98}{appendChild}}(\doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}*\ item);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ removeChild(\textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910}{row}});}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00059\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}*\ \doxymbox{\hyperlink{class_model_part_af32381b69415f0aa6bdfd84435f842cc}{child}}(\textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910}{row}});}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_aea4bb035b2b3827c0abf677fb9dc68ce}{childCount}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_a94623f4e95be3c462297c1abc7b6f3c7}{columnCount}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00076\ \ \ \ \ QVariant\ \doxymbox{\hyperlink{class_model_part_a178655da543bd0dae2d0ed1e2ea38a56}{data}}(\textcolor{keywordtype}{int}\ column)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_a3232893d070ddcec42631bf5b043add8}{set}}(\textcolor{keywordtype}{int}\ column,\ \textcolor{keyword}{const}\ QVariant\&\ value);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00087\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}*\ \doxymbox{\hyperlink{class_model_part_a9be3859d2a298e88d850a2480b7639f7}{parentItem}}();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910}{row}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_abbaaa19d7d24b9f1138072d594bd838c}{setColour}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ R,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ G,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ B);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \doxymbox{\hyperlink{class_model_part_af2c1b405404cdb46d45a804838440e3a}{getColourR}}();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \doxymbox{\hyperlink{class_model_part_a3ddfad7df9c628e07f1f5e50a47d41d3}{getColourG}}();}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \doxymbox{\hyperlink{class_model_part_a2cae1e4fd951f1a5f62b93a7f9c68521}{getColourB}}();}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_a96c8cca32bd530bf28c6ab6a1ccc2353}{setVisible}}(\textcolor{keywordtype}{bool}\ isVisible);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_model_part_a6ae791107c322f3e729a8de69257fa4b}{visible}}();}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_model_part_a8d004c61b9f9cb0da895956a4c22b97b}{loadSTL}}(QString\ fileName);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00136\ \ \ \ \ vtkSmartPointer<vtkActor>\ \doxymbox{\hyperlink{class_model_part_a3d845a3cb1d357a0c2f4ffb131e73116}{getActor}}();}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ vtkSmartPointer<vtkActor>\ \doxymbox{\hyperlink{class_model_part_a14ba4e6c0b21b77f6147c71826c33265}{getNewActor}}();}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{bool}\ getClipEnabled()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_clipEnabled;\ \}}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{bool}\ getShrinkEnabled()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_shrinkEnabled;\ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{void}\ setClipEnabled(\textcolor{keywordtype}{bool}\ enabled)\ \{\ m\_clipEnabled\ =\ enabled;\ \}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ setShrinkEnabled(\textcolor{keywordtype}{bool}\ enabled)\ \{\ m\_shrinkEnabled\ =\ enabled;\ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{void}\ updatePipeline();}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{comment}{//\ Getters/setters}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{float}\ getShrinkFactor()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_shrinkFactor;\ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ getClipOrigin()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_clipOrigin;\ \}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{void}\ \ setShrinkFactor(\textcolor{keywordtype}{float}\ f)\ \{\ m\_shrinkFactor\ =\ f;\ \}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ \ setClipOrigin(\textcolor{keywordtype}{int}\ origin)\ \{\ m\_clipOrigin\ =\ origin;\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00162\ \ \ \ \ QList<ModelPart*>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_childItems;\ \ \ }
+\DoxyCodeLine{00163\ \ \ \ \ QList<QVariant>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_itemData;\ \ \ \ \ }
+\DoxyCodeLine{00164\ \ \ \ \ \doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{ModelPart}}*\ m\_parentItem;\ \ \ }
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isVisible;\ \ \ \ \ \ }
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ vtkColor3<unsigned\ char>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colour;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_clipEnabled;}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_shrinkEnabled;}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ vtkSmartPointer<vtkSTLReader>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_reader;}
+\DoxyCodeLine{00174\ \ \ \ \ vtkSmartPointer<vtkPolyDataMapper>\ \ \ \ \ \ \ \ \ \ m\_mapper;}
+\DoxyCodeLine{00175\ \ \ \ \ vtkSmartPointer<vtkActor>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_actor;}
+\DoxyCodeLine{00176\ \ \ \ \ vtkSmartPointer<vtkPlane>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_clipPlane;}
+\DoxyCodeLine{00177\ \ \ \ \ vtkSmartPointer<vtkClipPolyData>\ \ \ \ \ \ \ \ \ \ \ \ m\_clipFilter;}
+\DoxyCodeLine{00178\ \ \ \ \ vtkSmartPointer<vtkShrinkFilter>\ \ \ \ \ \ \ \ \ \ \ \ m\_shrinkFilter;}
+\DoxyCodeLine{00179\ \ \ \ \ vtkSmartPointer<vtkGeometryFilter>\ \ \ \ \ \ \ \ \ \ m\_geometryFilter;}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{comment}{//\ Private\ members}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordtype}{float}\ m\_shrinkFactor;}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ m\_clipOrigin;}
+\DoxyCodeLine{00183\ \};}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

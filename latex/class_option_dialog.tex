@@ -1,0 +1,99 @@
+\doxysection{Option\+Dialog Class Reference}
+\hypertarget{class_option_dialog}{}\label{class_option_dialog}\index{OptionDialog@{OptionDialog}}
+Inheritance diagram for Option\+Dialog:\+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_option_dialog}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_option_dialog_a4540736a5c6e4468dad5165c7aefc8bc}{Option\+Dialog}} (QWidget \texorpdfstring{$\ast$}{*}parent=nullptr)
+\item 
+\doxymbox{\hyperlink{class_option_dialog_a640a1faddda44f2567cf386de0085ec7}{\texorpdfstring{$\sim$}{\string~}\+Option\+Dialog}} ()
+\item 
+void \doxymbox{\hyperlink{class_option_dialog_a5f2578ef11d7940ca5821f2fcbf79e4d}{load\+From\+Model\+Part}} (\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}part)
+\item 
+void \doxymbox{\hyperlink{class_option_dialog_a8cbe60aecbb7344f560f424ed537b47a}{save\+To\+Model\+Part}} (\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}part)
+\end{DoxyCompactItemize}
+
+
+\label{class_option_dialog_doc-constructors}
+\Hypertarget{class_option_dialog_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_option_dialog_a4540736a5c6e4468dad5165c7aefc8bc}\index{OptionDialog@{OptionDialog}!OptionDialog@{OptionDialog}}
+\index{OptionDialog@{OptionDialog}!OptionDialog@{OptionDialog}}
+\doxysubsubsection{\texorpdfstring{OptionDialog()}{OptionDialog()}}
+{\footnotesize\ttfamily \label{class_option_dialog_a4540736a5c6e4468dad5165c7aefc8bc} 
+Option\+Dialog::\+\+Option\+Dialog (\begin{DoxyParamCaption}\item[{QWidget \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Constructor for option\+Dialog widget. 
+\begin{DoxyParams}{Parameters}
+{\em QWidget} & \texorpdfstring{$\ast$}{*}parent, parent widget, which is in mainwindow. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None.
+\end{DoxyReturn}
+Constructor for \doxylink{class_option_dialog}{Option\+Dialog} Set ups the UI widget for changing the colour of an STL file. \Hypertarget{class_option_dialog_a640a1faddda44f2567cf386de0085ec7}\index{OptionDialog@{OptionDialog}!````~OptionDialog@{\texorpdfstring{$\sim$}{\string~}OptionDialog}}
+\index{````~OptionDialog@{\texorpdfstring{$\sim$}{\string~}OptionDialog}!OptionDialog@{OptionDialog}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}OptionDialog()}{\string~OptionDialog()}}
+{\footnotesize\ttfamily \label{class_option_dialog_a640a1faddda44f2567cf386de0085ec7} 
+Option\+Dialog::\+\texorpdfstring{$\sim$}{\string~}\+Option\+Dialog (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+destructor for option\+Dialog widget. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None
+\end{DoxyReturn}
+Destructor for option\+Diolog Deletes the ui. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\label{class_option_dialog_doc-func-members}
+\Hypertarget{class_option_dialog_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_option_dialog_a5f2578ef11d7940ca5821f2fcbf79e4d}\index{OptionDialog@{OptionDialog}!loadFromModelPart@{loadFromModelPart}}
+\index{loadFromModelPart@{loadFromModelPart}!OptionDialog@{OptionDialog}}
+\doxysubsubsection{\texorpdfstring{loadFromModelPart()}{loadFromModelPart()}}
+{\footnotesize\ttfamily \label{class_option_dialog_a5f2578ef11d7940ca5821f2fcbf79e4d} 
+void Option\+Dialog::\+load\+From\+Model\+Part (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}}]{part}{}\end{DoxyParamCaption})}
+
+function to load from the \doxylink{class_model_part}{Model\+Part} gets the colour values of RGB for the \doxylink{class_model_part}{Model\+Part}. gets the value of visible, and it\textquotesingle{}s name. 
+\begin{DoxyParams}{Parameters}
+{\em Model\+Part\texorpdfstring{$\ast$}{*}part,the} & part that needs to be coloured \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_option_dialog_a8cbe60aecbb7344f560f424ed537b47a}\index{OptionDialog@{OptionDialog}!saveToModelPart@{saveToModelPart}}
+\index{saveToModelPart@{saveToModelPart}!OptionDialog@{OptionDialog}}
+\doxysubsubsection{\texorpdfstring{saveToModelPart()}{saveToModelPart()}}
+{\footnotesize\ttfamily \label{class_option_dialog_a8cbe60aecbb7344f560f424ed537b47a} 
+void Option\+Dialog::\+save\+To\+Model\+Part (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}}]{part}{}\end{DoxyParamCaption})}
+
+Function for sacing the colour changes to the UI makes the colour changes set by the user to be visible on the UI 
+\begin{DoxyParams}{Parameters}
+{\em Model\+Part\texorpdfstring{$\ast$}{*}} & part, the part which has been changed in colour. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{_option_dialog_8h}{Option\+Dialog.\+h}}\item 
+\doxymbox{\hyperlink{_option_dialog_8cpp}{Option\+Dialog.\+cpp}}\end{DoxyCompactItemize}

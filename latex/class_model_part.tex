@@ -1,0 +1,325 @@
+\doxysection{Model\+Part Class Reference}
+\hypertarget{class_model_part}{}\label{class_model_part}\index{ModelPart@{ModelPart}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{class_model_part_a4f22ba9a54525edde005cb4eb7366648}{Model\+Part}} (const QList$<$ QVariant $>$ \&data, \doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}parent=nullptr)
+\item 
+\doxymbox{\hyperlink{class_model_part_a0b3b00630e9866e3e8fd648d28b7f016}{\texorpdfstring{$\sim$}{\string~}\+Model\+Part}} ()
+\item 
+void \doxymbox{\hyperlink{class_model_part_a52074db110367665c3e262919e172c98}{append\+Child}} (\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}item)
+\item 
+\Hypertarget{class_model_part_ac7c34fdc872e698650322446d2366dde}\label{class_model_part_ac7c34fdc872e698650322446d2366dde} 
+void {\bfseries remove\+Child} (int row)
+\item 
+\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_model_part_af32381b69415f0aa6bdfd84435f842cc}{child}} (int row)
+\item 
+int \doxymbox{\hyperlink{class_model_part_aea4bb035b2b3827c0abf677fb9dc68ce}{child\+Count}} () const
+\item 
+int \doxymbox{\hyperlink{class_model_part_a94623f4e95be3c462297c1abc7b6f3c7}{column\+Count}} () const
+\item 
+QVariant \doxymbox{\hyperlink{class_model_part_a178655da543bd0dae2d0ed1e2ea38a56}{data}} (int column) const
+\item 
+void \doxymbox{\hyperlink{class_model_part_a3232893d070ddcec42631bf5b043add8}{set}} (int column, const QVariant \&value)
+\item 
+\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{class_model_part_a9be3859d2a298e88d850a2480b7639f7}{parent\+Item}} ()
+\item 
+int \doxymbox{\hyperlink{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910}{row}} () const
+\item 
+void \doxymbox{\hyperlink{class_model_part_abbaaa19d7d24b9f1138072d594bd838c}{set\+Colour}} (const unsigned char R, const unsigned char G, const unsigned char B)
+\item 
+unsigned char \doxymbox{\hyperlink{class_model_part_af2c1b405404cdb46d45a804838440e3a}{get\+ColourR}} ()
+\item 
+unsigned char \doxymbox{\hyperlink{class_model_part_a3ddfad7df9c628e07f1f5e50a47d41d3}{get\+ColourG}} ()
+\item 
+unsigned char \doxymbox{\hyperlink{class_model_part_a2cae1e4fd951f1a5f62b93a7f9c68521}{get\+ColourB}} ()
+\item 
+void \doxymbox{\hyperlink{class_model_part_a96c8cca32bd530bf28c6ab6a1ccc2353}{set\+Visible}} (bool is\+Visible)
+\item 
+bool \doxymbox{\hyperlink{class_model_part_a6ae791107c322f3e729a8de69257fa4b}{visible}} ()
+\item 
+void \doxymbox{\hyperlink{class_model_part_a8d004c61b9f9cb0da895956a4c22b97b}{load\+STL}} (QString file\+Name)
+\item 
+vtk\+Smart\+Pointer$<$ vtk\+Actor $>$ \doxymbox{\hyperlink{class_model_part_a3d845a3cb1d357a0c2f4ffb131e73116}{get\+Actor}} ()
+\item 
+vtk\+Smart\+Pointer$<$ vtk\+Actor $>$ \doxymbox{\hyperlink{class_model_part_a14ba4e6c0b21b77f6147c71826c33265}{get\+New\+Actor}} ()
+\item 
+\Hypertarget{class_model_part_a393860ebae3b634f2e46c828f702326c}\label{class_model_part_a393860ebae3b634f2e46c828f702326c} 
+bool {\bfseries get\+Clip\+Enabled} () const
+\item 
+\Hypertarget{class_model_part_a3e83ff5e16369fecf12deaf91d9a6bfe}\label{class_model_part_a3e83ff5e16369fecf12deaf91d9a6bfe} 
+bool {\bfseries get\+Shrink\+Enabled} () const
+\item 
+\Hypertarget{class_model_part_abaa31e2a7d096589fac296759b69ef8a}\label{class_model_part_abaa31e2a7d096589fac296759b69ef8a} 
+void {\bfseries set\+Clip\+Enabled} (bool enabled)
+\item 
+\Hypertarget{class_model_part_aafbde1b303e7804bb6fb109c812d13f1}\label{class_model_part_aafbde1b303e7804bb6fb109c812d13f1} 
+void {\bfseries set\+Shrink\+Enabled} (bool enabled)
+\item 
+\Hypertarget{class_model_part_a227673d49c3cde8001e7ce3f9a5c2ec0}\label{class_model_part_a227673d49c3cde8001e7ce3f9a5c2ec0} 
+void {\bfseries update\+Pipeline} ()
+\item 
+\Hypertarget{class_model_part_a597edacadc2dbbfb704b29221fc7c7b5}\label{class_model_part_a597edacadc2dbbfb704b29221fc7c7b5} 
+float {\bfseries get\+Shrink\+Factor} () const
+\item 
+\Hypertarget{class_model_part_a7ae43dc3dd97a3fcc81f651c1e04ba4a}\label{class_model_part_a7ae43dc3dd97a3fcc81f651c1e04ba4a} 
+int {\bfseries get\+Clip\+Origin} () const
+\item 
+\Hypertarget{class_model_part_a3d500ff21eb5496b50cf5cfb9360b968}\label{class_model_part_a3d500ff21eb5496b50cf5cfb9360b968} 
+void {\bfseries set\+Shrink\+Factor} (float f)
+\item 
+\Hypertarget{class_model_part_a0e5dee3f209fa6b260ef92f8f1946717}\label{class_model_part_a0e5dee3f209fa6b260ef92f8f1946717} 
+void {\bfseries set\+Clip\+Origin} (int origin)
+\end{DoxyCompactItemize}
+
+
+\label{class_model_part_doc-constructors}
+\Hypertarget{class_model_part_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_model_part_a4f22ba9a54525edde005cb4eb7366648}\index{ModelPart@{ModelPart}!ModelPart@{ModelPart}}
+\index{ModelPart@{ModelPart}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{ModelPart()}{ModelPart()}}
+{\footnotesize\ttfamily \label{class_model_part_a4f22ba9a54525edde005cb4eb7366648} 
+Model\+Part::\+\+Model\+Part (\begin{DoxyParamCaption}\item[{const QList$<$ QVariant $>$ \&}]{data}{, }\item[{\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+Constructor 
+\begin{DoxyParams}{Parameters}
+{\em data} & is a list of strings/\+properties for this item \\
+\hline
+{\em parent} & is the parent of this item in the tree\\
+\hline
+\end{DoxyParams}
+This function is the Constructor for the model parts to be added as tree\+View items. sets the shrink filter, and clip filters to disabled, sets the origin to 0,0,0 
+\begin{DoxyParams}{Parameters}
+{\em const} & QList$<$\+QVariant$>$\& data, and Model\+Part\texorpdfstring{$\ast$}{*} parent, these are a qlist for the model parts, and the parent of \doxylink{class_model_part}{Model\+Part} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{class_model_part_a0b3b00630e9866e3e8fd648d28b7f016}\index{ModelPart@{ModelPart}!````~ModelPart@{\texorpdfstring{$\sim$}{\string~}ModelPart}}
+\index{````~ModelPart@{\texorpdfstring{$\sim$}{\string~}ModelPart}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}ModelPart()}{\string~ModelPart()}}
+{\footnotesize\ttfamily \label{class_model_part_a0b3b00630e9866e3e8fd648d28b7f016} 
+Model\+Part::\+\texorpdfstring{$\sim$}{\string~}\+Model\+Part (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Destructor Frees all child items
+
+This function is the Destructor. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\label{class_model_part_doc-func-members}
+\Hypertarget{class_model_part_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_model_part_a52074db110367665c3e262919e172c98}\index{ModelPart@{ModelPart}!appendChild@{appendChild}}
+\index{appendChild@{appendChild}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{appendChild()}{appendChild()}}
+{\footnotesize\ttfamily \label{class_model_part_a52074db110367665c3e262919e172c98} 
+void Model\+Part::\+append\+Child (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*}}]{item}{}\end{DoxyParamCaption})}
+
+Add a child to this item 
+\begin{DoxyParams}{Parameters}
+{\em item} & pointer to child object\\
+\hline
+\end{DoxyParams}
+Function adding child item Add child item. 
+\begin{DoxyParams}{Parameters}
+{\em Model\+Part\texorpdfstring{$\ast$}{*}} & item \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None. 
+\end{DoxyReturn}
+\Hypertarget{class_model_part_af32381b69415f0aa6bdfd84435f842cc}\index{ModelPart@{ModelPart}!child@{child}}
+\index{child@{child}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{child()}{child()}}
+{\footnotesize\ttfamily \label{class_model_part_af32381b69415f0aa6bdfd84435f842cc} 
+\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*} Model\+Part::\+child (\begin{DoxyParamCaption}\item[{int}]{row}{}\end{DoxyParamCaption})}
+
+Return child at position row below this item 
+\begin{DoxyParams}{Parameters}
+{\em row} & child row number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to child item 
+\end{DoxyReturn}
+\Hypertarget{class_model_part_aea4bb035b2b3827c0abf677fb9dc68ce}\index{ModelPart@{ModelPart}!childCount@{childCount}}
+\index{childCount@{childCount}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{childCount()}{childCount()}}
+{\footnotesize\ttfamily \label{class_model_part_aea4bb035b2b3827c0abf677fb9dc68ce} 
+int Model\+Part::\+child\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Return number of children \begin{DoxyReturn}{Returns}
+number of children
+\end{DoxyReturn}
+Return number of children. \Hypertarget{class_model_part_a94623f4e95be3c462297c1abc7b6f3c7}\index{ModelPart@{ModelPart}!columnCount@{columnCount}}
+\index{columnCount@{columnCount}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{columnCount()}{columnCount()}}
+{\footnotesize\ttfamily \label{class_model_part_a94623f4e95be3c462297c1abc7b6f3c7} 
+int Model\+Part::\+column\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Return number of columns/\+properties \begin{DoxyReturn}{Returns}
+number of visible data columns
+\end{DoxyReturn}
+Return number of columns. \Hypertarget{class_model_part_a178655da543bd0dae2d0ed1e2ea38a56}\index{ModelPart@{ModelPart}!data@{data}}
+\index{data@{data}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{data()}{data()}}
+{\footnotesize\ttfamily \label{class_model_part_a178655da543bd0dae2d0ed1e2ea38a56} 
+QVariant Model\+Part::\+data (\begin{DoxyParamCaption}\item[{int}]{column}{}\end{DoxyParamCaption}) const}
+
+Return the data item at a particular column 
+\begin{DoxyParams}{Parameters}
+{\em column} & column index \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+QVariant data value 
+\end{DoxyReturn}
+\Hypertarget{class_model_part_a3d845a3cb1d357a0c2f4ffb131e73116}\index{ModelPart@{ModelPart}!getActor@{getActor}}
+\index{getActor@{getActor}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{getActor()}{getActor()}}
+{\footnotesize\ttfamily \label{class_model_part_a3d845a3cb1d357a0c2f4ffb131e73116} 
+vtk\+Smart\+Pointer$<$ vtk\+Actor $>$ Model\+Part::\+get\+Actor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Return GUI actor \begin{DoxyReturn}{Returns}
+pointer to actor used in the normal Qt/\+\+VTK renderer 
+\end{DoxyReturn}
+\Hypertarget{class_model_part_a2cae1e4fd951f1a5f62b93a7f9c68521}\index{ModelPart@{ModelPart}!getColourB@{getColourB}}
+\index{getColourB@{getColourB}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{getColourB()}{getColourB()}}
+{\footnotesize\ttfamily \label{class_model_part_a2cae1e4fd951f1a5f62b93a7f9c68521} 
+unsigned char Model\+Part::\+get\+ColourB (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Get blue colour value \begin{DoxyReturn}{Returns}
+blue value, 0-\/255
+\end{DoxyReturn}
+Get blue value. \Hypertarget{class_model_part_a3ddfad7df9c628e07f1f5e50a47d41d3}\index{ModelPart@{ModelPart}!getColourG@{getColourG}}
+\index{getColourG@{getColourG}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{getColourG()}{getColourG()}}
+{\footnotesize\ttfamily \label{class_model_part_a3ddfad7df9c628e07f1f5e50a47d41d3} 
+unsigned char Model\+Part::\+get\+ColourG (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Get green colour value \begin{DoxyReturn}{Returns}
+green value, 0-\/255
+\end{DoxyReturn}
+Get green value. \Hypertarget{class_model_part_af2c1b405404cdb46d45a804838440e3a}\index{ModelPart@{ModelPart}!getColourR@{getColourR}}
+\index{getColourR@{getColourR}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{getColourR()}{getColourR()}}
+{\footnotesize\ttfamily \label{class_model_part_af2c1b405404cdb46d45a804838440e3a} 
+unsigned char Model\+Part::\+get\+ColourR (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Get red colour value \begin{DoxyReturn}{Returns}
+red value, 0-\/255
+\end{DoxyReturn}
+Get red value. \Hypertarget{class_model_part_a14ba4e6c0b21b77f6147c71826c33265}\index{ModelPart@{ModelPart}!getNewActor@{getNewActor}}
+\index{getNewActor@{getNewActor}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{getNewActor()}{getNewActor()}}
+{\footnotesize\ttfamily \label{class_model_part_a14ba4e6c0b21b77f6147c71826c33265} 
+vtk\+Smart\+Pointer$<$ vtk\+Actor $>$ Model\+Part::\+get\+New\+Actor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Return a new actor for VR
+
+Important:\+ This does NOT return the normal GUI actor. It creates a new mapper and a new actor for the VR renderer.
+
+\begin{DoxyReturn}{Returns}
+pointer to new actor used in VR
+\end{DoxyReturn}
+Create and return a new actor for VR.
+
+This is important:\+
+
+The GUI renderer already uses:\+ STL reader -\/\texorpdfstring{$>$}{>} GUI mapper -\/\texorpdfstring{$>$}{>} GUI actor
+
+The VR renderer must use:\+ same STL reader -\/\texorpdfstring{$>$}{>} new VR mapper -\/\texorpdfstring{$>$}{>} new VR actor
+
+Do not return the normal GUI actor here. \Hypertarget{class_model_part_a8d004c61b9f9cb0da895956a4c22b97b}\index{ModelPart@{ModelPart}!loadSTL@{loadSTL}}
+\index{loadSTL@{loadSTL}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{loadSTL()}{loadSTL()}}
+{\footnotesize\ttfamily \label{class_model_part_a8d004c61b9f9cb0da895956a4c22b97b} 
+void Model\+Part::\+load\+STL (\begin{DoxyParamCaption}\item[{QString}]{file\+Name}{}\end{DoxyParamCaption})}
+
+Load STL file 
+\begin{DoxyParams}{Parameters}
+{\em file\+Name} & STL file path \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_model_part_a9be3859d2a298e88d850a2480b7639f7}\index{ModelPart@{ModelPart}!parentItem@{parentItem}}
+\index{parentItem@{parentItem}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{parentItem()}{parentItem()}}
+{\footnotesize\ttfamily \label{class_model_part_a9be3859d2a298e88d850a2480b7639f7} 
+\doxymbox{\hyperlink{class_model_part}{Model\+Part}} \texorpdfstring{$\ast$}{*} Model\+Part::\+parent\+Item (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Get pointer to parent item \begin{DoxyReturn}{Returns}
+pointer to parent item
+\end{DoxyReturn}
+Return parent item. \Hypertarget{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910}\index{ModelPart@{ModelPart}!row@{row}}
+\index{row@{row}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{row()}{row()}}
+{\footnotesize\ttfamily \label{class_model_part_a05bc0dd06a3658d9a2c46fa717dec910} 
+int Model\+Part::\+row (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Get row index of this item relative to parent \begin{DoxyReturn}{Returns}
+row index
+\end{DoxyReturn}
+Return row index. \Hypertarget{class_model_part_a3232893d070ddcec42631bf5b043add8}\index{ModelPart@{ModelPart}!set@{set}}
+\index{set@{set}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{set()}{set()}}
+{\footnotesize\ttfamily \label{class_model_part_a3232893d070ddcec42631bf5b043add8} 
+void Model\+Part::\+set (\begin{DoxyParamCaption}\item[{int}]{column}{, }\item[{const QVariant \&}]{value}{}\end{DoxyParamCaption})}
+
+Set a property value 
+\begin{DoxyParams}{Parameters}
+{\em column} & column index \\
+\hline
+{\em value} & value to set \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_model_part_abbaaa19d7d24b9f1138072d594bd838c}\index{ModelPart@{ModelPart}!setColour@{setColour}}
+\index{setColour@{setColour}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{setColour()}{setColour()}}
+{\footnotesize\ttfamily \label{class_model_part_abbaaa19d7d24b9f1138072d594bd838c} 
+void Model\+Part::\+set\+Colour (\begin{DoxyParamCaption}\item[{const unsigned char}]{R}{, }\item[{const unsigned char}]{G}{, }\item[{const unsigned char}]{B}{}\end{DoxyParamCaption})}
+
+Set colour using 0-\/255 RGB values 
+\begin{DoxyParams}{Parameters}
+{\em R} & red value \\
+\hline
+{\em G} & green value \\
+\hline
+{\em B} & blue value\\
+\hline
+\end{DoxyParams}
+Set colour. \Hypertarget{class_model_part_a96c8cca32bd530bf28c6ab6a1ccc2353}\index{ModelPart@{ModelPart}!setVisible@{setVisible}}
+\index{setVisible@{setVisible}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{setVisible()}{setVisible()}}
+{\footnotesize\ttfamily \label{class_model_part_a96c8cca32bd530bf28c6ab6a1ccc2353} 
+void Model\+Part::\+set\+Visible (\begin{DoxyParamCaption}\item[{bool}]{is\+Visible}{}\end{DoxyParamCaption})}
+
+Set visible flag 
+\begin{DoxyParams}{Parameters}
+{\em is\+Visible} & true if visible, false if hidden\\
+\hline
+\end{DoxyParams}
+Set visibility. \Hypertarget{class_model_part_a6ae791107c322f3e729a8de69257fa4b}\index{ModelPart@{ModelPart}!visible@{visible}}
+\index{visible@{visible}!ModelPart@{ModelPart}}
+\doxysubsubsection{\texorpdfstring{visible()}{visible()}}
+{\footnotesize\ttfamily \label{class_model_part_a6ae791107c322f3e729a8de69257fa4b} 
+bool Model\+Part::\+visible (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Get visible flag \begin{DoxyReturn}{Returns}
+true if visible
+\end{DoxyReturn}
+Return visibility. 
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{_model_part_8h}{Model\+Part.\+h}}\item 
+\doxymbox{\hyperlink{_model_part_8cpp}{Model\+Part.\+cpp}}\end{DoxyCompactItemize}
